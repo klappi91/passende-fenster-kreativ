@@ -3,6 +3,7 @@ import { Phone, Mail, MapPin, ExternalLink } from "lucide-react";
 
 const navLinks = [
   { label: "Fenster-Systeme", href: "/#fenster-systeme" },
+  { label: "Katalog", href: "/katalog" },
   { label: "Dienstleistungen", href: "/dienstleistungen" },
   { label: "Konfigurator", href: "/#konfigurator" },
   { label: "Anfrage", href: "/anfrage" },

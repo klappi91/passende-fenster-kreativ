@@ -1,64 +1,27 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { getFeaturedProducts, getProductPath } from "@/lib/katalog";
+import type { Product } from "@/lib/katalog";
 
-interface Product {
-  name: string;
-  brand: string;
-  description: string;
-  image?: string;
-  featured?: boolean;
-}
+const featured = getFeaturedProducts(6);
 
-const products: Product[] = [
-  {
-    name: "Synego",
-    brand: "Schüco",
-    description: "Premium-Profil mit hervorragender Wärmedämmung",
-    image: "/images/synego.png",
-    featured: true,
-  },
-  {
-    name: "S9000",
-    brand: "Gealan",
-    description: "Hochleistungsprofil mit 6-Kammer-System",
-  },
-  {
-    name: "Energeto",
-    brand: "Aluplast",
-    description: "Energieeffizientes Profil für Passivhäuser",
-    image: "/images/energeto-neo-program.png",
-    featured: true,
-  },
-  {
-    name: "bluEvolution 92",
-    brand: "Deceuninck",
-    description: "92mm Bautiefe für maximale Isolation",
-    image: "/images/bluevolution92-program-deutschland.png",
-  },
-  {
-    name: "Streamline 76",
-    brand: "Salamander",
-    description: "Schlankes Design mit 76mm Bautiefe",
-  },
+const clipVariants = [
+  "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
+  "polygon(0 0, 100% 0, 100% 92%, 0 100%)",
+  "polygon(0 0, 100% 4%, 100% 100%, 0 96%)",
+  "polygon(0 0, 100% 0, 96% 100%, 0 100%)",
+  "polygon(4% 0, 100% 0, 100% 100%, 0 100%)",
 ];
 
-function GradientPlaceholder({ brand }: { brand: string }) {
-  // Vary gradient angle per brand for visual diversity
-  const gradients: Record<string, string> = {
-    Gealan:
-      "linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 50%, var(--brand-secondary) 100%)",
-    Salamander:
-      "linear-gradient(225deg, var(--brand-secondary) 0%, var(--brand-accent) 60%, var(--brand-primary) 100%)",
-  };
-
+function GradientPlaceholder() {
   return (
     <div
       className="absolute inset-0 opacity-20"
       style={{
         background:
-          gradients[brand] ||
           "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
       }}
     />
@@ -74,19 +37,13 @@ function ProductCard({
   className?: string;
   index: number;
 }) {
-  const hasImage = !!product.image;
-  // Alternate clip-path on certain cards for visual variety
-  const clipVariants = [
-    "polygon(0 0, 100% 0, 100% 100%, 0 100%)",
-    "polygon(0 0, 100% 0, 100% 92%, 0 100%)",
-    "polygon(0 0, 100% 4%, 100% 100%, 0 96%)",
-    "polygon(0 0, 100% 0, 96% 100%, 0 100%)",
-    "polygon(4% 0, 100% 0, 100% 100%, 0 100%)",
-  ];
+  const hasImage = !!product.images.thumbnail;
+  const brand = product.tags[0] || product.category_path[2] || "";
 
   return (
-    <div
-      className={`group relative overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-500 hover:shadow-2xl hover:shadow-[var(--brand-primary)]/15 ${className || ""}`}
+    <Link
+      href={getProductPath(product)}
+      className={`group relative block overflow-hidden rounded-2xl bg-white shadow-lg transition-all duration-500 hover:shadow-2xl hover:shadow-[var(--brand-primary)]/15 ${className || ""}`}
       data-animate="fade-up"
       style={{
         transform: "perspective(800px) rotateY(0deg) rotateX(0deg)",
@@ -106,19 +63,21 @@ function ProductCard({
       <div
         className="relative h-full min-h-[280px] overflow-hidden"
         style={{
-          clipPath: hasImage ? clipVariants[index % clipVariants.length] : undefined,
+          clipPath: hasImage
+            ? clipVariants[index % clipVariants.length]
+            : undefined,
         }}
       >
         {hasImage ? (
           <Image
-            src={product.image!}
-            alt={`${product.brand} ${product.name}`}
+            src={product.images.thumbnail}
+            alt={`${brand} ${product.name}`}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
           />
         ) : (
-          <GradientPlaceholder brand={product.brand} />
+          <GradientPlaceholder />
         )}
 
         {/* Overlay gradient for text readability */}
@@ -132,16 +91,17 @@ function ProductCard({
         />
       </div>
 
-      {/* Brand badge — overlaps top edge of content area */}
-      <div className="absolute top-4 left-4 z-20">
-        <span className="inline-block rounded-full bg-[var(--brand-primary)] px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-[var(--brand-primary)]/30">
-          {product.brand}
-        </span>
-      </div>
+      {/* Brand badge */}
+      {brand && (
+        <div className="absolute top-4 left-4 z-20">
+          <span className="inline-block rounded-full bg-[var(--brand-primary)] px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg shadow-[var(--brand-primary)]/30">
+            {brand}
+          </span>
+        </div>
+      )}
 
-      {/* Content — positioned at bottom, overlapping the card edge */}
+      {/* Content */}
       <div className="absolute bottom-0 left-0 right-0 z-10 p-6">
-        {/* Product name — large, breaking out of visual boundary */}
         <h3
           className="font-display text-2xl font-bold leading-tight text-white sm:text-3xl"
           style={{
@@ -152,10 +112,11 @@ function ProductCard({
           {product.name}
         </h3>
         <p
-          className="mt-2 text-sm leading-relaxed text-white/80"
+          className="mt-2 line-clamp-2 text-sm leading-relaxed text-white/80"
           style={{ fontFamily: "var(--font-sans)" }}
         >
-          {product.description}
+          {product.description?.slice(0, 120)}
+          {product.description && product.description.length > 120 ? "..." : ""}
         </p>
 
         {/* Accent line */}
@@ -177,13 +138,16 @@ function ProductCard({
           borderRadius: "0 1rem 0 0",
         }}
       />
-    </div>
+    </Link>
   );
 }
 
 export default function FensterSysteme() {
   return (
-    <section id="fenster-systeme" className="relative overflow-hidden bg-white py-24 sm:py-32">
+    <section
+      id="fenster-systeme"
+      className="relative overflow-hidden bg-white py-24 sm:py-32"
+    >
       {/* Subtle background decoration */}
       <div
         className="pointer-events-none absolute top-0 right-0 h-96 w-96 opacity-5"
@@ -210,61 +174,82 @@ export default function FensterSysteme() {
 
         {/* Creative asymmetric grid */}
         <div className="grid auto-rows-[320px] grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:auto-rows-[380px]">
-          {/* Schüco Synego — featured large, spans 2 cols on lg */}
-          <div className="sm:col-span-2 lg:row-span-1">
-            <ProductCard
-              product={products[0]}
-              className="h-full"
-              index={0}
-            />
-          </div>
+          {/* First product — featured large, spans 2 cols on lg */}
+          {featured[0] && (
+            <div className="sm:col-span-2 lg:row-span-1">
+              <ProductCard
+                product={featured[0]}
+                className="h-full"
+                index={0}
+              />
+            </div>
+          )}
 
-          {/* Gealan S9000 — standard */}
-          <div className="lg:row-span-1">
-            <ProductCard
-              product={products[1]}
-              className="h-full"
-              index={1}
-            />
-          </div>
+          {/* Second product */}
+          {featured[1] && (
+            <div className="lg:row-span-1">
+              <ProductCard
+                product={featured[1]}
+                className="h-full"
+                index={1}
+              />
+            </div>
+          )}
 
-          {/* Aluplast Energeto — featured, tall on lg */}
-          <div className="lg:row-span-2">
-            <ProductCard
-              product={products[2]}
-              className="h-full"
-              index={2}
-            />
-          </div>
+          {/* Third product — tall on lg */}
+          {featured[2] && (
+            <div className="lg:row-span-2">
+              <ProductCard
+                product={featured[2]}
+                className="h-full"
+                index={2}
+              />
+            </div>
+          )}
 
-          {/* Deceuninck bluEvolution 92 */}
-          <div className="lg:row-span-1">
-            <ProductCard
-              product={products[3]}
-              className="h-full"
-              index={3}
-            />
-          </div>
+          {/* Fourth product */}
+          {featured[3] && (
+            <div className="lg:row-span-1">
+              <ProductCard
+                product={featured[3]}
+                className="h-full"
+                index={3}
+              />
+            </div>
+          )}
 
-          {/* Salamander Streamline 76 */}
-          <div className="lg:row-span-1">
-            <ProductCard
-              product={products[4]}
-              className="h-full"
-              index={4}
-            />
-          </div>
+          {/* Fifth product */}
+          {featured[4] && (
+            <div className="lg:row-span-1">
+              <ProductCard
+                product={featured[4]}
+                className="h-full"
+                index={4}
+              />
+            </div>
+          )}
+
+          {/* Sixth product (new) */}
+          {featured[5] && (
+            <div className="sm:col-span-2 lg:col-span-1 lg:row-span-1">
+              <ProductCard
+                product={featured[5]}
+                className="h-full"
+                index={5}
+              />
+            </div>
+          )}
         </div>
 
         {/* CTA */}
         <div className="mt-16 flex justify-center sm:mt-20">
-          <a
-            href="#konfigurator"
+          <Link
+            href="/katalog"
             className="group/cta inline-flex items-center gap-3 rounded-xl bg-brand-gradient px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-[var(--brand-primary)]/25 transition-all duration-300 hover:gap-5 hover:shadow-xl hover:shadow-[var(--brand-primary)]/35"
           >
-            Alle Fenster im Konfigurator
+            Alle Produkte im Katalog
             <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover/cta:translate-x-1" />
-          </a>
+          </Link>
         </div>
       </div>
     </section>
