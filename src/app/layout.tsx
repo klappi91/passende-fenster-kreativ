@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins, Lato } from "next/font/google";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { QueryProvider } from "@/components/providers/query-provider";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -52,9 +53,11 @@ export default function RootLayout({
       <body
         className={`${poppins.variable} ${lato.variable} antialiased`}
       >
-        <Header />
-        {children}
-        <Footer />
+        <QueryProvider>
+          <Header />
+          {children}
+          <Footer />
+        </QueryProvider>
       </body>
     </html>
   );

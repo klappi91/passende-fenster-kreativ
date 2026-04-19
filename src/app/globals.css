@@ -91,6 +91,20 @@
   --brand-text: #3f3f3f;
   --brand-heading: #212934;
   --brand-light: #f2f8fc;
+
+  /* Konfigurator tokens (siehe specs/konfigurator-design.md §2) */
+  --konfig-canvas: #fafbfc;
+  --konfig-grid: rgba(0, 159, 227, 0.04);
+  --konfig-stroke: #009fe3;
+  --konfig-stroke-muted: #cfe7f5;
+  --konfig-price: #212934;
+  --konfig-step-done: #15779b;
+  --konfig-step-active: #009fe3;
+  --konfig-step-idle: #e2e2e2;
+  --konfig-chip-idle-bg: #f2f8fc;
+  --konfig-chip-hover-bg: #e2ecf6;
+  --konfig-chip-active-bg: #009fe3;
+  --konfig-chip-active-fg: #ffffff;
 }
 
 @layer base {
@@ -167,4 +181,55 @@
 .no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Konfigurator typography utilities */
+.heading-konfig-step {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+  color: var(--brand-heading);
+}
+
+.heading-price {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--konfig-price);
+  font-variant-numeric: tabular-nums;
+}
+
+.heading-price-label {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+.text-measure {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+
+.text-caption {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .konfig-animate,
+  .konfig-animate * {
+    transition: none !important;
+    animation: none !important;
+  }
 }
