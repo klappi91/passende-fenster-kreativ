@@ -643,7 +643,18 @@ Implementierung in eigener Session (ohne Kontext-Ballast der Recherche).
 
 **Phase 1a — Backend-Kern (§7 Schritt 1-5):** ✅ komplett
 **Phase 1b — API-Routes (§7 Schritt 6):** ✅ komplett (Commit `5e033a4`)
-**UX-Recherche (Vorarbeit Schritt 7):** ✅ komplett — siehe [`konfigurator-ux-research.md`](./konfigurator-ux-research.md)
+**UX-Recherche (Vorarbeit Schritt 7):** ✅ komplett — siehe [`konfigurator-ux-research.md`](./konfigurator-ux-research.md) + [`konfigurator-ux-research-v2.md`](./konfigurator-ux-research-v2.md)
+**Phase 1c — Konfigurator-UI + Ausmess-Guide (§7 Schritt 7):** ✅ komplett
+
+Artefakte Phase 1c:
+- `specs/konfigurator-ui.md` — UX-Flow, Wireframes, State-Strategie, 12 Entscheidungen
+- `specs/konfigurator-design.md` — Design-Richtung "Atelier + Blueprint", CSS-Tokens, Key-Screens
+- Routes: `/konfigurator` (5-Step-Flow) + `/fenster-ausmessen` (SEO-Seite mit MiniRechner, 11 Kapiteln, Schema.org HowTo)
+- Komponenten: ~15 Konfigurator-Module, 6 SVG-Shape-Primitives (DIN-1356), WindowPreview (CSS-Grid nach `shape_configuration`)
+- Libs: `measure-math.ts` (pure), `konfigurator-api.ts` (React Query), `konfigurator-types.ts`, Zustand-Store mit localStorage-Persist
+- Dependencies ergänzt: `zustand`, `@tanstack/react-query`, `vaul`
+- shadcn-Components ergänzt: `drawer`, `accordion`, `toggle-group`, `radio-group`, `label`, `toggle`
+- Commits: `3e93b7a` (Foundation), `b1a2b3e` (SVG-Preview), `a51329f` (Shell + 5 Steps + Sidebar + Mobile-Sheet), `2bb8d34` (Ausmess-Guide)
 
 - **Schema-Migrations** (Supabase `fvafvfhdrbziivlbuuqn`):
   - `0001_initial_schema` — Basis-Tabellen
@@ -696,31 +707,26 @@ Implementierung in eigener Session (ohne Kontext-Ballast der Recherche).
 2. `shapes[]`-Query-Parameter wird akzeptiert, aber nicht DB-seitig angewendet (alle 6 Profile unterstützen alle Shapes; `article_shapes` ist leer). UI darf ihn trotzdem mitschicken — wird in `query`-Feld zurückgespiegelt. **TODO bei Sortimentserweiterung:** `article_shapes` pflegen + Filter aktivieren.
 3. **Image-Sync-Lücke:** Nur 39 Bilder gemirrort (aus dem Standard-Artikel-Call bei 1200×1400). Viele Article-Variants haben keine eigenen Bilder in Storage → Response liefert entweder `image: null` oder eine URL auf `back_public/…` die 404 liefern kann. **TODO:** Image-Sync so erweitern, dass er alle distinct `image`-URLs aus `properties.image`, `variants.propertyValues[].image` und weiteren article/{id}/{w}/{h}-Responses erfasst.
 
-### 12.2 Offen (nächste Session)
+### 12.2 Offen (Phase 1d)
 
-**Phase 1c — UX-Design + Konfigurator-UI (§7 Schritt 7):**
+**§7 Schritt 8 — Mail-Notification bei neuer Anfrage**
+- POST `/api/v1/inquiries` schreibt bereits in DB (Phase 1b). Noch offen: automatische Mail an `info@passende-fenster.de` (Adresse mit Kunde bestätigen) + Bestätigungsmail an Interessent.
+- Technisch: Resend oder Supabase Edge Function im Post-Inquiry-Hook.
 
-Grundlage bilden drei Dokumente:
-- `specs/konfigurator-ux-research.md` — 5 Wettbewerber analysiert, Take-Aways
-- `specs/konfigurator-api.md` — API-Details für den UI-Layer
-- `specs/konfigurator-db.md` §7 / §10 — Scope-Grenzen, offene Produktfragen
+**§7 Schritt 9 — Sanity-Checks**
+- Preise aus Supabase gegen qlein-API-Live-Werte crosschecken (Stichproben).
+- Visuelle Regressions-Prüfung der 5 Steps auf Mobile (iOS Safari, Android Chrome).
+- Lighthouse-Score für `/konfigurator` und `/fenster-ausmessen`.
 
-**Kern-Empfehlungen aus der Recherche:**
+**Alu- und Holz-Lead-Seiten (aus §4.3, Entscheidung 2026-04-19):**
+- Statische Seiten `/alu-fenster` und `/holz-fenster` mit Kontaktformular.
+- Verlinkung bereits vorbereitet (Profil-Step-Footer + StepAnfrage-Sonderanfrage-Flow).
 
-- **Unser USP = umgekehrte Reihenfolge.** Alle Wettbewerber fragen zuerst das Profil, dann die Maße. Wir machen es andersrum: **Maße + Flügel + Öffnungsarten → matchende Profile im Preis-/Uw-Vergleich**. Dadurch wird die Liste der 6 Profile zum entscheidenden Mehrwert-Moment.
-- **Ausmess-Tutorial als eigenständige SEO-Seite + Modal-Einbindung im Konfigurator.** Differenzierungs-Chance: interaktiver Mini-Rechner "Rohbaumaß → Bestellmaß", State-Sharing mit dem Konfigurator. Pflicht-Inhalte: Altbau-vs-Neubau, Messpunkte, Einbauluft-Tabelle, Fensterbank, Rollladen, Glossar.
-- **Stepped Single-Page-Layout mit Sticky Live-Preview + Live-Preis.** Mobile: Preview als Floating-Bottom-Sheet. Nicht mehrseitiger Wizard.
-- **Lead-Funnel (nicht Warenkorb).** CTA: „Angebot anfordern". Optional: „Konfiguration per Mail" als Soft-Conversion.
-
-**Konkrete Aufgaben Schritt 7:**
-
-1. **UX-Flow finalisieren** — Brainstorm (siehe Start-Prompt unten). Output: `specs/konfigurator-ui.md` mit Wireframes, Komponenten-Baum, States.
-2. **Design-Richtung** — Kreativ-Variante mit `frontend-design`-Skill (Farben, Typo, Mood innerhalb der bestehenden Marke).
-3. **Konfigurator-Seite** — `src/app/konfigurator/page.tsx` + Komponenten. Verbraucht die API aus Schritt 6.
-4. **Ausmess-Guide-Seite** — `src/app/fenster-ausmessen/page.tsx` (SEO-Slug). Inkl. Mini-Rechner als Client-Component.
-5. **Modal-Einbindung** des Guide-Contents im Konfigurator (gleiche Komponenten, Drawer-View).
-
-**Phase 1d — Mail + Sanity (§7 Schritt 8-9):** bewusst nicht im Scope der nächsten Session. Erst nach UI-Rollout.
+**Bekannte Einschränkungen Phase 1c:**
+1. **Keine Illustrationen**: Der Ausmess-Guide verwendet derzeit nur Lucide-Icons (Ruler, PenTool, Home, Layers etc.). Eigene Blueprint-SVG-Illustrationen (vgl. specs/konfigurator-design.md §6.3, 8 Motive) sind nachzuziehen — ~2-3 Tage Design-Arbeit.
+2. **Kein PDF-Download**: Aufmaßhilfe-PDF als statisches Asset in `/public/` fehlt noch. Einmalige Figma-Design-Arbeit.
+3. **Variant-Picker zeigt max 24 Farbvarianten**: bei Profilen mit 200+ Farben bleibt der Rest im Text-Hinweis „weitere auf Anfrage". Pragmatisch für den MVP, erweiterbar als Modal bei Bedarf.
+4. **Mailto-Fallback bei Sonderanfragen**: Alu/Holz/Nicht-Standard-Größe öffnet `mailto:` statt Backend-Inquiry-POST. Alternative ist eine eigene Material-Anfrage-Route oder erweitertes `configuration`-JSONB (siehe §12.1 Follow-ups).
 
 ### 12.3 Architektur-Entscheidungen
 

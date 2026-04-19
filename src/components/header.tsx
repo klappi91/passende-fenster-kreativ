@@ -15,8 +15,8 @@ import {
 const navItems = [
   { label: "Fenster-Systeme", href: "/#fenster-systeme" },
   { label: "Katalog", href: "/katalog" },
-  { label: "Dienstleistungen", href: "/dienstleistungen" },
-  { label: "Konfigurator", href: "/#konfigurator" },
+  { label: "Konfigurator", href: "/konfigurator" },
+  { label: "Fenster ausmessen", href: "/fenster-ausmessen" },
   { label: "Anfrage", href: "/anfrage" },
 ];
 
@@ -98,7 +98,7 @@ export default function Header() {
 
           {/* CTA Button */}
           <Link
-            href="/#konfigurator"
+            href="/konfigurator"
             className="bg-brand-gradient ml-3 inline-flex items-center rounded-full px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-100"
           >
             Jetzt konfigurieren
@@ -160,7 +160,7 @@ export default function Header() {
 
                 <div className="mt-6 px-4">
                   <Link
-                    href="/#konfigurator"
+                    href="/konfigurator"
                     onClick={() => setMobileOpen(false)}
                     className="bg-brand-gradient flex min-h-[44px] w-full items-center justify-center rounded-full text-base font-semibold text-white shadow-md transition-all hover:shadow-lg"
                   >

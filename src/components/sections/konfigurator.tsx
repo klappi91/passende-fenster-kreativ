@@ -176,11 +176,18 @@ export default function Konfigurator() {
         {/* CTA */}
         <div className="flex flex-col items-center gap-5" data-animate="fade-up">
           <Link
-            href="/anfrage"
+            href="/konfigurator"
             className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-white px-10 py-4 text-lg font-bold text-[var(--brand-primary)] shadow-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl active:scale-100"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Jetzt Anfrage senden &rarr;
+            Zum Konfigurator &rarr;
+          </Link>
+          <Link
+            href="/fenster-ausmessen"
+            className="text-sm text-white/80 underline-offset-2 transition hover:text-white hover:underline"
+            style={{ fontFamily: "var(--font-sans)" }}
+          >
+            Unsicher beim Ausmessen? → Mess-Guide
           </Link>
           <a
             href="tel:015116804054"
