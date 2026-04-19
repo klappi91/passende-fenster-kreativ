@@ -590,9 +590,32 @@ Aktivierung **nach Phase-1-Launch**. Ziel: Telegram-Alerts bei Änderungen, manu
 
 ## 10. Offene Fragen / Entscheidungen
 
-- [ ] **Streamline 76 vs. greenEvolution 76 Flex** — Kundenentscheidung (siehe §4.3).
-- [ ] **Alu- / Holz-Fenster** im Relaunch-Scope? (§4.3)
+- [x] **Streamline 76 vs. greenEvolution 76 Flex** — _Entscheidung 2026-04-19:_ später ersetzen. Siehe §10.1.
+- [x] **Alu- / Holz-Fenster** im Relaunch-Scope? — _Entscheidung 2026-04-19:_ raus aus Phase 1c-Konfigurator. Lead-Seiten `/alu-fenster`, `/holz-fenster` in Phase 1d.
 - [ ] **Preis-Raster-Granularität** — 100 mm oder 200 mm? (Trade-off: Interpolationsgenauigkeit vs. Scrape-Aufwand). Empfehlung: 200 mm + lineare Interpolation auf dem Client.
+
+### 10.1 Nachrüstung greenEvolution 76 Flex (Follow-up, nicht im 1c-Scope)
+
+Phase 1c baut gegen die 6 vorhandenen qlein-Profile. greenEvolution 76 Flex kommt nachträglich rein. Zwei Wege, in Präferenz-Reihenfolge:
+
+**Weg A — qlein-Admin aktivieren (empfohlen):**
+- Kunde (passende-fenster.de) legt das Profil im qlein-Admin-Backend an / aktiviert es.
+- Unser `scripts/qlein-scraper.py` läuft re-run, zieht Artikel + Preisraster + Bilder + Additions automatisch.
+- Kein Schema-Aufwand bei uns.
+
+**Weg B — manuelle DB-Pflege:**
+Benötigte Daten vom Kunden (Datenblatt bzw. Salamander-Dokumentation):
+1. Offizieller Produktname + Brand (Salamander)
+2. Uw-Wert (bestmöglich, vermutlich 0,74 W/m²K)
+3. Bautiefe, Kammerzahl, Verglasung (2-/3-fach), Dichtungszahl
+4. **Preisraster** — Gesamtpreis für 3 Groups × 120 Größen-Punkte (≈ 360 Punkte). Ohne Preisraster: UI-Fallback „Preis auf Anfrage".
+5. Additions-Kompatibilität (Rollladen-/Schallschutz-Optionen)
+6. Farbvarianten (RAL-Codes, Außen/Innen)
+7. Produktbilder (mindestens 1)
+
+Bei Weg B: neue Migration `0003_greenevolution_seed.sql` + ergänzter Image-Sync. UI zeigt es ohne Code-Änderung sobald in DB, weil Artikel-Liste API-getrieben ist.
+
+**UI-Auswirkung beim Austausch:** Streamline 76 bleibt in der DB (historische Daten), wird aber via Flag `articles.visible = false` ausgeblendet sobald greenEvolution live ist. Migration `0004_visible_flag.sql` nötig (Feld + Default true + Update für Streamline 76).
 - [ ] **Lead-Flow** — Anfragen an `info@passende-fenster.de` oder eigene Adresse?
 - [ ] **Debug-Modus melden** — Kunde informieren, dass `admin.passende-fenster.de/_profiler/` öffentlich ist.
 - [ ] **Live-Sync** — regelmäßiger Re-Scrape von qlein während PF den Vertrag mit Qlein hält? Empfehlung: wöchentlicher Cron, Delta-Upsert.

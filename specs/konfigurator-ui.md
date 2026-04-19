@@ -493,7 +493,7 @@ Die folgenden Punkte habe ich basierend auf der Research vorentschieden. Jede ka
 9. **Sondermaß-Flow** → Empfehlung: Inline-Warning + Switch zu Schritt-5 mit Flag. Alternative: Hartes Blocken. **Gewählt: Warning + Switch.**
 10. **Konfig-per-Mail-speichern** → Empfehlung: Mailto-Link mit Deep-Link-URL (ohne Backend). Alternative: eigener Inquiry-Typ, eigenes Feld im DB. **Gewählt: Mailto-Link (MVP).**
 
-Zusätzlich zwei Produktfragen, die aus DB-§4.3 offen sind und auch in die UI durchschlagen:
+Zusätzlich zwei Produktfragen, die aus DB-§4.3 offen waren und entschieden sind:
 
-11. **Streamline 76** behalten / umbenennen / durch greenEvolution 76 Flex ersetzen? *(betrifft Text in Profil-Karten — wenn behalten, müssen wir den höheren Uw-Wert nicht weglügen.)* **Vorschlag:** Behalten, aber UI-Text „Für Sanierungen und einfache Modernisierung" setzen, damit der Uw-Unterschied kontextualisiert ist.
-12. **Alu / Holz im Konfigurator** Scope 1c? *(qlein hat diese nicht, Eko-Okna wäre separater Import.)* **Vorschlag:** Raus aus 1c. Stattdessen auf `/katalog` + Lead-Formular-Anker verweisen. Im Profil-Listen-Footer Link „Alu- oder Holz-Fenster gewünscht?" → Step 5 mit vorbelegtem Material-Request.
+11. **Streamline 76** — später durch greenEvolution 76 Flex ersetzen (Chris-Entscheidung 2026-04-19). Für 1c bleiben die 6 qlein-Profile wie sie sind, Streamline 76 wird via Default-Sort (Uw ↓) optisch nach unten sortiert und erhält kein besonderes Label. Nachrüstung von greenEvolution siehe [`konfigurator-db.md`](./konfigurator-db.md) §10.
+12. **Alu / Holz im Konfigurator** — raus aus 1c (Chris-Entscheidung 2026-04-19). UI-Ableitung: Im Profil-Listen-Footer (Step 3) Link „Alu- oder Holz-Fenster gewünscht? → Sonderanfrage" → öffnet Step 5 mit vorbelegtem Material-Request (`configuration.materialRequest: 'alu' | 'holz'`). Statische Lead-Seiten `/alu-fenster` und `/holz-fenster` folgen in Phase 1d.
