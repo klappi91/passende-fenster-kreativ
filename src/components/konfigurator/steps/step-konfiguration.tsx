@@ -311,36 +311,35 @@ function AdditionOptionRow({
 }) {
   const variants = option.variants;
 
+  // Option ohne Sub-Varianten: Die Option selbst ist die wählbare Einheit.
+  // Wir nehmen option.external_id als Toggle-ID (qlein-IDs sind zwischen
+  // article_additions und article_addition_variants disjoint).
   if (variants.length === 0) {
-    return (
-      <div className="text-sm text-[var(--muted-foreground)]">
-        {option.name}
-      </div>
-    );
-  }
-
-  // Einfachere MVP: wenn nur 1 Variante — Checkbox-Style
-  if (variants.length === 1) {
-    const v = variants[0];
-    const active = v.external_id !== null && selectedIds.includes(v.external_id);
+    const active =
+      option.external_id !== null && selectedIds.includes(option.external_id);
     return (
       <AdditionToggle
         name={option.name}
-        priceCents={v.price_cents}
+        priceCents={option.price_cents}
         image={option.image}
         active={active}
-        onToggle={() => v.external_id !== null && onToggle(v.external_id)}
+        onToggle={() =>
+          option.external_id !== null && onToggle(option.external_id)
+        }
       />
     );
   }
 
-  // Mehrere Varianten: Header + Liste (Radio-artig, aber zustandsfrei — nur 1 kann gleichzeitig aktiv)
+  // Mehrere Varianten: Option als Header + Varianten-Chips.
+  // Klick auf die Option selbst schaltet sie an/aus (wie ein Checkbox-Toggle);
+  // Varianten-Chips wählen die Ausprägung (max. eine aktiv wird clientseitig
+  // nicht erzwungen — die UI macht nur das Tracking).
   return (
-    <div className="space-y-1">
-      <p className="text-xs font-semibold text-[var(--brand-heading)]">
+    <div className="rounded-xl border border-[var(--border)] bg-white p-3">
+      <p className="mb-2 text-sm font-semibold text-[var(--brand-heading)]">
         {option.name}
       </p>
-      <div className="flex flex-wrap gap-1">
+      <div className="flex flex-wrap gap-1.5">
         {variants.map((v) => {
           const active =
             v.external_id !== null && selectedIds.includes(v.external_id);
@@ -349,7 +348,7 @@ function AdditionOptionRow({
               key={v.id}
               type="button"
               onClick={() => v.external_id !== null && onToggle(v.external_id)}
-              className={`rounded-full border px-3 py-1 text-xs transition ${
+              className={`konfig-animate rounded-full border-2 px-3 py-1 text-xs font-medium transition ${
                 active
                   ? "border-[var(--konfig-stroke)] bg-[var(--konfig-chip-idle-bg)] text-[var(--brand-heading)]"
                   : "border-[var(--border)] bg-white text-[var(--brand-text)] hover:border-[var(--konfig-stroke-muted)]"
@@ -439,8 +438,12 @@ function countSelectedInCategory(
 ): number {
   let n = 0;
   for (const o of options) {
-    for (const v of o.variants) {
-      if (v.external_id !== null && selectedIds.includes(v.external_id)) n++;
+    if (o.variants.length === 0) {
+      if (o.external_id !== null && selectedIds.includes(o.external_id)) n++;
+    } else {
+      for (const v of o.variants) {
+        if (v.external_id !== null && selectedIds.includes(v.external_id)) n++;
+      }
     }
   }
   return n;
