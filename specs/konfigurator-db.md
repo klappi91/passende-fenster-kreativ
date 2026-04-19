@@ -707,7 +707,24 @@ Artefakte Phase 1c:
 2. `shapes[]`-Query-Parameter wird akzeptiert, aber nicht DB-seitig angewendet (alle 6 Profile unterstützen alle Shapes; `article_shapes` ist leer). UI darf ihn trotzdem mitschicken — wird in `query`-Feld zurückgespiegelt. **TODO bei Sortimentserweiterung:** `article_shapes` pflegen + Filter aktivieren.
 3. **Image-Sync-Lücke:** Nur 39 Bilder gemirrort (aus dem Standard-Artikel-Call bei 1200×1400). Viele Article-Variants haben keine eigenen Bilder in Storage → Response liefert entweder `image: null` oder eine URL auf `back_public/…` die 404 liefern kann. **TODO:** Image-Sync so erweitern, dass er alle distinct `image`-URLs aus `properties.image`, `variants.propertyValues[].image` und weiteren article/{id}/{w}/{h}-Responses erfasst.
 
-### 12.2 Offen (Phase 1d)
+### 12.2 Offen — Phase 1d (priorisiert, naechste Session)
+
+**Image-Pipeline + UI-Polish** — volle Spec in [`konfigurator-image-pipeline.md`](./konfigurator-image-pipeline.md).
+
+Trigger: Chris-Feedback 2026-04-19 „nicht auf Stand des qlein-Konfigurators, Bilder und Farben fehlen". Root-Cause: die benoetigten Bilder (15.671 Stueck, 10.369 Farbsamples, 360°-Frames) liegen bereits lokal in `~/projects/passende-fenster-scraper/output/` — Phase-1c-Implementierung hatte sie uebersehen.
+
+Kern-Tasks:
+1. Mapping-Script qlein-Artikel → WP-Katalog-Produkt (Fuzzy-Match)
+2. Mapping-Script qlein-Variant → WP-Farbsample
+3. Image-Upload zu Supabase Storage
+4. Migration `0003_wp_images.sql`
+5. UI-Refactor Step 4: Accordion flach, Bilder in Toggle-Rows, grosse Farb-Swatches
+6. Optional: Live-Farb-Fill im Fenster-SVG
+7. Optional: 360°-Viewer (evtl. aus `src/components/katalog/` wiederverwendbar)
+
+Geschaetzter Aufwand: 1-2 Arbeitstage.
+
+### 12.3 Offen — Phase 1e (nach 1d)
 
 **§7 Schritt 8 — Mail-Notification bei neuer Anfrage**
 - POST `/api/v1/inquiries` schreibt bereits in DB (Phase 1b). Noch offen: automatische Mail an `info@passende-fenster.de` (Adresse mit Kunde bestätigen) + Bestätigungsmail an Interessent.
@@ -722,10 +739,10 @@ Artefakte Phase 1c:
 - Statische Seiten `/alu-fenster` und `/holz-fenster` mit Kontaktformular.
 - Verlinkung bereits vorbereitet (Profil-Step-Footer + StepAnfrage-Sonderanfrage-Flow).
 
-**Bekannte Einschränkungen Phase 1c:**
-1. **Keine Illustrationen**: Der Ausmess-Guide verwendet derzeit nur Lucide-Icons (Ruler, PenTool, Home, Layers etc.). Eigene Blueprint-SVG-Illustrationen (vgl. specs/konfigurator-design.md §6.3, 8 Motive) sind nachzuziehen — ~2-3 Tage Design-Arbeit.
+**Bekannte Einschränkungen Phase 1c (teilweise in 1d adressiert):**
+1. **Keine Illustrationen im Ausmess-Guide**: Der Ausmess-Guide verwendet derzeit nur Lucide-Icons. Eigene Blueprint-SVG-Illustrationen (vgl. specs/konfigurator-design.md §6.3, 8 Motive) sind nachzuziehen — ~2-3 Tage Design-Arbeit. Nicht 1d-Scope, da Design-Arbeit.
 2. **Kein PDF-Download**: Aufmaßhilfe-PDF als statisches Asset in `/public/` fehlt noch. Einmalige Figma-Design-Arbeit.
-3. **Variant-Picker zeigt max 24 Farbvarianten**: bei Profilen mit 200+ Farben bleibt der Rest im Text-Hinweis „weitere auf Anfrage". Pragmatisch für den MVP, erweiterbar als Modal bei Bedarf.
+3. **Variant-Picker zeigt max 24 Farbvarianten**: wird in 1d durch „Weitere laden"-Button oder Modal erweitert (alle 46-62 Farben zugaenglich).
 4. **Mailto-Fallback bei Sonderanfragen**: Alu/Holz/Nicht-Standard-Größe öffnet `mailto:` statt Backend-Inquiry-POST. Alternative ist eine eigene Material-Anfrage-Route oder erweitertes `configuration`-JSONB (siehe §12.1 Follow-ups).
 
 ### 12.3 Architektur-Entscheidungen
