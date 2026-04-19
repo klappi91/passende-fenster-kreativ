@@ -619,6 +619,8 @@ Implementierung in eigener Session (ohne Kontext-Ballast der Recherche).
 ### 12.1 Abgeschlossen (Stand 2026-04-19)
 
 **Phase 1a — Backend-Kern (§7 Schritt 1-5):** ✅ komplett
+**Phase 1b — API-Routes (§7 Schritt 6):** ✅ komplett (Commit `5e033a4`)
+**UX-Recherche (Vorarbeit Schritt 7):** ✅ komplett — siehe [`konfigurator-ux-research.md`](./konfigurator-ux-research.md)
 
 - **Schema-Migrations** (Supabase `fvafvfhdrbziivlbuuqn`):
   - `0001_initial_schema` — Basis-Tabellen
@@ -649,35 +651,62 @@ Implementierung in eigener Session (ohne Kontext-Ballast der Recherche).
 | article_price_points (Raster 200 mm) | 2442 |
 | delivery_time_rules | 4 |
 
-**Credentials:** `.env.local` liegt lokal (gitignored). `SUPABASE_SECRET_KEY` wird vor Live-Gang rotiert.
+**API-Oberfläche nach Schritt 6:**
+
+| Methode | Pfad | Zweck |
+|---|---|---|
+| GET | `/api/v1/init` | Stammdaten (brands, shapes, groups, rangeSizes) |
+| GET | `/api/v1/articles?w=&h=&group=&brand[]=&shapes[]=` | Artikel-Liste mit Preis (bilinear interpoliert) |
+| GET | `/api/v1/articles/:slug` | Detail (properties, additions+variants, article-variants, images) |
+| GET | `/api/v1/articles/:slug/price?w=&h=&group=` | Einzelpreis-Lookup |
+| POST | `/api/v1/inquiries` | Lead anlegen (public) |
+| GET | `/api/v1/inquiries` | Admin-Liste (`x-admin-token`) |
+| GET/PATCH | `/api/v1/inquiries/:id` | Admin-Detail/Update |
+
+**Neue Libs:** `src/lib/supabase/{server,browser}.ts`, `src/lib/storage.ts` (Storage-URLs), `src/lib/price-interpolation.ts`, `src/lib/auth.ts`, `src/lib/db-types.ts` (MCP-generiert). Dependencies: `@supabase/supabase-js`, `zod`.
+
+**Credentials:** `.env.local` liegt lokal (gitignored). `SUPABASE_SECRET_KEY` und `ADMIN_API_TOKEN` werden vor Live-Gang rotiert.
+
+**Follow-ups / Tech-Debt aus Schritt 6:**
+
+1. `admin_note` im PATCH landet in `inquiries.configuration.admin_notes[]` (JSONB, append-only), weil die Tabelle keine dedizierte Spalte hat. **TODO:** Migration `0003_inquiries_admin_notes` — eigene `admin_notes` Tabelle oder Spalte.
+2. `shapes[]`-Query-Parameter wird akzeptiert, aber nicht DB-seitig angewendet (alle 6 Profile unterstützen alle Shapes; `article_shapes` ist leer). UI darf ihn trotzdem mitschicken — wird in `query`-Feld zurückgespiegelt. **TODO bei Sortimentserweiterung:** `article_shapes` pflegen + Filter aktivieren.
+3. **Image-Sync-Lücke:** Nur 39 Bilder gemirrort (aus dem Standard-Artikel-Call bei 1200×1400). Viele Article-Variants haben keine eigenen Bilder in Storage → Response liefert entweder `image: null` oder eine URL auf `back_public/…` die 404 liefern kann. **TODO:** Image-Sync so erweitern, dass er alle distinct `image`-URLs aus `properties.image`, `variants.propertyValues[].image` und weiteren article/{id}/{w}/{h}-Responses erfasst.
 
 ### 12.2 Offen (nächste Session)
 
-**Phase 1b — API + UI + Mail (§7 Schritt 6-9):**
+**Phase 1c — UX-Design + Konfigurator-UI (§7 Schritt 7):**
 
-- **Schritt 6 — Next.js API-Routes** (`src/app/api/v1/`):
-  - `GET /api/v1/init` — Stammdaten (brands/shapes/groups/rangeSizes) aus DB
-  - `GET /api/v1/articles` — Query: `w, h, group, shape[], brand[]` → matchende Artikel inkl. Preis-Lookup aus `article_price_points` (lineare Interpolation zwischen 200 mm-Rasterpunkten)
-  - `GET /api/v1/articles/:slug` — Detail inkl. properties, additions+variants, images (Storage-URLs)
-  - `GET /api/v1/articles/:slug/price?w=…&h=…&group=…` — einzelner Preis-Call
-  - `POST /api/v1/inquiries` — Lead anlegen
-  - Admin-Routes (`GET /api/v1/inquiries`, `PATCH /api/v1/inquiries/:id`) mit Auth-Stub
-- **Schritt 7 — Konfigurator-UI** (`src/app/konfigurator/`):
-  - Maß-Eingabe (Width/Height mit `rangeSizes`-Validierung)
-  - Group-Wahl (13 Flügel-Varianten mit Preview)
-  - Shape-Wahl pro Flügel
-  - Brand-Filter
-  - Result-Liste mit Sortierung (Preis / Uw)
-  - Detail-View mit Variants (Außen-/Innenfarbe) + Additions (Rollladen, Schallschutz etc.)
-  - CTA → Inquiry-Form
-- **Schritt 8 — Mail-Notification** bei neuem Inquiry (Resend oder Supabase Edge Function) an `info@passende-fenster.de`
-- **Schritt 9 — Sanity-Checks** (Preise matchen qlein-Live, Bilder rendern, Inquiry-Flow E2E)
+Grundlage bilden drei Dokumente:
+- `specs/konfigurator-ux-research.md` — 5 Wettbewerber analysiert, Take-Aways
+- `specs/konfigurator-api.md` — API-Details für den UI-Layer
+- `specs/konfigurator-db.md` §7 / §10 — Scope-Grenzen, offene Produktfragen
 
-### 12.3 Architektur-Entscheidungen aus dieser Session
+**Kern-Empfehlungen aus der Recherche:**
+
+- **Unser USP = umgekehrte Reihenfolge.** Alle Wettbewerber fragen zuerst das Profil, dann die Maße. Wir machen es andersrum: **Maße + Flügel + Öffnungsarten → matchende Profile im Preis-/Uw-Vergleich**. Dadurch wird die Liste der 6 Profile zum entscheidenden Mehrwert-Moment.
+- **Ausmess-Tutorial als eigenständige SEO-Seite + Modal-Einbindung im Konfigurator.** Differenzierungs-Chance: interaktiver Mini-Rechner "Rohbaumaß → Bestellmaß", State-Sharing mit dem Konfigurator. Pflicht-Inhalte: Altbau-vs-Neubau, Messpunkte, Einbauluft-Tabelle, Fensterbank, Rollladen, Glossar.
+- **Stepped Single-Page-Layout mit Sticky Live-Preview + Live-Preis.** Mobile: Preview als Floating-Bottom-Sheet. Nicht mehrseitiger Wizard.
+- **Lead-Funnel (nicht Warenkorb).** CTA: „Angebot anfordern". Optional: „Konfiguration per Mail" als Soft-Conversion.
+
+**Konkrete Aufgaben Schritt 7:**
+
+1. **UX-Flow finalisieren** — Brainstorm (siehe Start-Prompt unten). Output: `specs/konfigurator-ui.md` mit Wireframes, Komponenten-Baum, States.
+2. **Design-Richtung** — Kreativ-Variante mit `frontend-design`-Skill (Farben, Typo, Mood innerhalb der bestehenden Marke).
+3. **Konfigurator-Seite** — `src/app/konfigurator/page.tsx` + Komponenten. Verbraucht die API aus Schritt 6.
+4. **Ausmess-Guide-Seite** — `src/app/fenster-ausmessen/page.tsx` (SEO-Slug). Inkl. Mini-Rechner als Client-Component.
+5. **Modal-Einbindung** des Guide-Contents im Konfigurator (gleiche Komponenten, Drawer-View).
+
+**Phase 1d — Mail + Sanity (§7 Schritt 8-9):** bewusst nicht im Scope der nächsten Session. Erst nach UI-Rollout.
+
+### 12.3 Architektur-Entscheidungen
 
 - **Secret-Key-only Setup.** Kein direktes Postgres (psycopg2) — alle Schreibzugriffe gehen über PostgREST + temporäre `admin_exec_sql`-RPC oder Supabase MCP. Vorteil: reproduzierbar per Seed-Datei, commitbar.
-- **Preis-Raster 200 mm** + lineare Interpolation auf Client/API-Seite (Spec-Default). Ergibt ~2400 Preispunkte, deckt 400–2800 mm × 400–3000 mm ab. Für Re-Scrape auf 100 mm: `PRICE_STEP = 100` in `qlein-scraper.py`.
+- **Preis-Raster 200 mm** + bilineare Interpolation (`src/lib/price-interpolation.ts`). ~2400 Preispunkte, deckt 400–2800 mm × 400–3000 mm ab. Für Re-Scrape auf 100 mm: `PRICE_STEP = 100` in `qlein-scraper.py`.
 - **Seed-Workflow**: `scripts/qlein-scraper.py` → commitbares `.sql` + `manifest.json`; `scripts/apply-seed.py` applyt. Re-Run für Preisupdates geplant wöchentlich (Cron, siehe §10 offene Fragen).
+- **API-First, keine UI-Duplikate.** Alle Daten sind via `/api/v1/*` zugänglich. Agents und Frontend nutzen dieselbe Oberfläche.
+- **Admin-Auth als Stub.** `x-admin-token`-Header gegen `ADMIN_API_TOKEN`-ENV. Vor Launch durch echtes Login ablösen.
+- **UX-Differenzierung durch umgekehrte Flow-Reihenfolge** (Maße zuerst, Profil-Vergleich danach). Begründung in `konfigurator-ux-research.md`.
 
 ---
 
