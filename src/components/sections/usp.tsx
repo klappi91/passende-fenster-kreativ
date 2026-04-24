@@ -139,6 +139,9 @@ export default function Usp() {
                   fontSize: "clamp(28px, 3.6vw, 48px)",
                   lineHeight: 1.05,
                   letterSpacing: "-0.025em",
+                  color: "#fff",
+                  overflowWrap: "anywhere",
+                  hyphens: "auto",
                 }}
               >
                 Fünf Premium-Profile

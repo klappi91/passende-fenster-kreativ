@@ -171,7 +171,7 @@ function ConfigPreview() {
         <div className="relative" style={{ width: dw, minHeight: dh }}>
           {/* Width dim */}
           <div
-            className="absolute flex items-center gap-2"
+            className="pf-konf-dim-w absolute flex items-center gap-2"
             style={{ top: -32, left: 0, right: 0 }}
           >
             <span
@@ -191,7 +191,7 @@ function ConfigPreview() {
           </div>
           {/* Height dim */}
           <div
-            className="absolute flex flex-col items-center gap-2"
+            className="pf-konf-dim-h absolute flex flex-col items-center gap-2"
             style={{ right: -40, top: 0, bottom: 0 }}
           >
             <span
@@ -413,6 +413,12 @@ function ConfigPreview() {
         @media (max-width: 1100px) {
           .pf-konf-preview {
             grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 640px) {
+          .pf-konf-dim-w,
+          .pf-konf-dim-h {
+            display: none !important;
           }
         }
       `}</style>
