@@ -2,176 +2,196 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Menu, Phone } from "lucide-react";
-import {
-  Sheet,
-  SheetTrigger,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet";
+import { Menu, X } from "lucide-react";
 
 const navItems = [
   { label: "Fenster-Systeme", href: "/#fenster-systeme" },
   { label: "Katalog", href: "/katalog" },
   { label: "Konfigurator", href: "/konfigurator" },
-  { label: "Fenster ausmessen", href: "/fenster-ausmessen" },
+  { label: "Ausmessen", href: "/fenster-ausmessen" },
   { label: "Anfrage", href: "/anfrage" },
 ];
 
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Close on resize to desktop
+  useEffect(() => {
+    const onResize = () => {
+      if (window.innerWidth > 1100) setOpen(false);
     };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    handleScroll();
-
-    return () => window.removeEventListener("scroll", handleScroll);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-white/95 shadow-lg backdrop-blur-md"
-          : "bg-transparent backdrop-blur-sm"
-      }`}
+      className="pf-header fixed z-50"
+      style={{
+        top: 14,
+        left: "50%",
+        transform: "translateX(-50%)",
+        width: "min(1320px, calc(100% - 28px))",
+      }}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="relative z-10 flex items-center gap-3 transition-opacity hover:opacity-80"
-        >
-          <Image
-            src="/images/logo.png"
-            alt="Passende-Fenster.de Logo"
-            width={44}
-            height={44}
-            className="h-10 w-auto sm:h-11"
-            priority
-          />
-          <span
-            className={`hidden text-lg font-bold tracking-tight transition-colors duration-300 sm:inline-block ${
-              scrolled ? "text-[var(--brand-heading)]" : "text-white"
-            }`}
-            style={{ fontFamily: "var(--font-display)" }}
+      <div
+        className="relative flex items-center justify-between text-white"
+        style={{
+          padding: "10px 10px 10px 22px",
+          background: `rgba(20,25,34,${scrolled ? 0.62 : 0.5})`,
+          backdropFilter: "saturate(180%) blur(22px)",
+          WebkitBackdropFilter: "saturate(180%) blur(22px)",
+          border: "1px solid rgba(255,255,255,0.14)",
+          borderRadius: 999,
+          boxShadow:
+            "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.25)",
+          transition: "background 0.3s",
+        }}
+      >
+        <span className="glass-shine" aria-hidden />
+
+        <Link href="/" className="relative flex items-center gap-3">
+          <div
+            className="grid h-9 w-9 place-items-center rounded-[10px] text-white"
+            style={{
+              background:
+                "linear-gradient(135deg, var(--brand-primary), var(--brand-secondary))",
+              fontFamily: "var(--font-display)",
+              fontWeight: 800,
+              fontSize: 14,
+            }}
           >
-            Passende-Fenster.de
+            PF
+          </div>
+          <span
+            className="hidden sm:inline-block font-bold tracking-tight"
+            style={{
+              fontFamily: "var(--font-display)",
+              fontWeight: 700,
+              letterSpacing: "-0.3px",
+            }}
+          >
+            Passende-Fenster
+            <span style={{ color: "var(--brand-primary)" }}>.de</span>
           </span>
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 lg:flex">
+        {/* Desktop nav */}
+        <nav className="pf-nav-desktop hidden items-center gap-1">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={`relative rounded-lg px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-[var(--brand-primary)]/10 ${
-                scrolled
-                  ? "text-[var(--brand-text)] hover:text-[var(--brand-primary)]"
-                  : "text-white/90 hover:text-white"
-              }`}
+              className="rounded-full px-3.5 py-2 text-[13px] font-medium text-white/85 transition-colors hover:text-white"
+              style={{ fontFamily: "var(--font-sans)" }}
             >
               {item.label}
             </Link>
           ))}
-
-          {/* Phone link */}
-          <a
-            href="tel:015116804054"
-            className={`ml-2 flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200 ${
-              scrolled
-                ? "text-[var(--brand-text)] hover:text-[var(--brand-primary)]"
-                : "text-white/90 hover:text-white"
-            }`}
-          >
-            <Phone className="h-4 w-4" />
-            <span className="hidden xl:inline">0151 16804054</span>
-          </a>
-
-          {/* CTA Button */}
           <Link
             href="/konfigurator"
-            className="bg-brand-gradient ml-3 inline-flex items-center rounded-full px-6 py-2.5 text-sm font-semibold text-white shadow-md transition-all duration-200 hover:scale-105 hover:shadow-lg active:scale-100"
+            className="ml-3 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-[13px] font-semibold text-white transition-transform hover:scale-[1.03]"
+            style={{
+              background: "var(--brand-primary)",
+              fontFamily: "var(--font-display)",
+              boxShadow: "0 10px 24px -10px rgba(0,159,227,0.6)",
+            }}
           >
-            Jetzt konfigurieren
+            Jetzt konfigurieren →
           </Link>
         </nav>
 
-        {/* Mobile Menu */}
-        <div className="flex items-center gap-2 lg:hidden">
-          <a
-            href="tel:015116804054"
-            className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg transition-colors ${
-              scrolled
-                ? "text-[var(--brand-primary)]"
-                : "text-white"
-            }`}
-            aria-label="Anrufen"
-          >
-            <Phone className="h-5 w-5" />
-          </a>
-
-          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-            <SheetTrigger
-              className={`flex min-h-[44px] min-w-[44px] items-center justify-center rounded-lg transition-colors ${
-                scrolled
-                  ? "text-[var(--brand-heading)]"
-                  : "text-white"
-              }`}
-              aria-label="Navigation öffnen"
-            >
-              <Menu className="h-6 w-6" />
-            </SheetTrigger>
-
-            <SheetContent side="right" className="w-full max-w-sm border-l-0 p-0">
-              <SheetHeader className="border-b border-[var(--border)] px-6 py-5">
-                <SheetTitle className="text-lg font-bold text-[var(--brand-heading)]" style={{ fontFamily: "var(--font-display)" }}>
-                  Navigation
-                </SheetTitle>
-              </SheetHeader>
-
-              <nav className="flex flex-col px-4 py-6">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="flex min-h-[44px] items-center rounded-xl px-4 text-base font-medium text-[var(--brand-text)] transition-colors hover:bg-[var(--brand-light)] hover:text-[var(--brand-primary)]"
-                  >
-                    {item.label}
-                  </Link>
-                ))}
-
-                <a
-                  href="tel:015116804054"
-                  className="mt-2 flex min-h-[44px] items-center gap-3 rounded-xl px-4 text-base font-medium text-[var(--brand-text)] transition-colors hover:bg-[var(--brand-light)] hover:text-[var(--brand-primary)]"
-                >
-                  <Phone className="h-5 w-5" />
-                  0151 16804054
-                </a>
-
-                <div className="mt-6 px-4">
-                  <Link
-                    href="/konfigurator"
-                    onClick={() => setMobileOpen(false)}
-                    className="bg-brand-gradient flex min-h-[44px] w-full items-center justify-center rounded-full text-base font-semibold text-white shadow-md transition-all hover:shadow-lg"
-                  >
-                    Jetzt konfigurieren
-                  </Link>
-                </div>
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
+        {/* Mobile burger */}
+        <button
+          type="button"
+          aria-label="Navigation öffnen"
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+          className="pf-nav-mobile grid place-items-center"
+          style={{
+            width: 44,
+            height: 44,
+            borderRadius: 12,
+            background: "rgba(255,255,255,0.12)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            color: "#fff",
+            backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
+          }}
+        >
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
+
+      {/* Mobile menu */}
+      {open && (
+        <div
+          className="relative mt-3 grid gap-1 overflow-hidden p-5"
+          style={{
+            background: "rgba(20,25,34,0.55)",
+            backdropFilter: "saturate(180%) blur(24px)",
+            WebkitBackdropFilter: "saturate(180%) blur(24px)",
+            border: "1px solid rgba(255,255,255,0.14)",
+            borderRadius: 22,
+            boxShadow:
+              "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.25)",
+          }}
+        >
+          <span className="glass-shine" aria-hidden />
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={() => setOpen(false)}
+              className="relative min-h-[44px] rounded-xl px-4 py-3.5 text-[15px] font-medium text-white/90"
+              style={{
+                border: "1px solid rgba(255,255,255,0.06)",
+                background: "rgba(255,255,255,0.04)",
+              }}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <Link
+            href="/konfigurator"
+            onClick={() => setOpen(false)}
+            className="relative mt-2 min-h-[44px] rounded-xl px-4 py-3.5 text-center text-[15px] font-semibold text-white"
+            style={{
+              background: "var(--brand-primary)",
+              fontFamily: "var(--font-display)",
+              boxShadow: "0 10px 24px -10px rgba(0,159,227,0.6)",
+            }}
+          >
+            Jetzt konfigurieren →
+          </Link>
+        </div>
+      )}
+
+      {/* Breakpoint rules for desktop↔mobile nav */}
+      <style jsx>{`
+        :global(.pf-nav-desktop) {
+          display: none;
+        }
+        :global(.pf-nav-mobile) {
+          display: grid;
+        }
+        @media (min-width: 1101px) {
+          :global(.pf-nav-desktop) {
+            display: flex;
+          }
+          :global(.pf-nav-mobile) {
+            display: none;
+          }
+        }
+      `}</style>
     </header>
   );
 }

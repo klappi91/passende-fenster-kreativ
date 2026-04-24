@@ -1,134 +1,269 @@
 "use client";
 
 import { useRef, useLayoutEffect } from "react";
-import gsap from "gsap";
 import Link from "next/link";
-import { ChevronDown } from "lucide-react";
+import gsap from "gsap";
 
 export default function Hero() {
   const sectionRef = useRef<HTMLElement>(null);
+  const paneRef = useRef<HTMLDivElement>(null);
+  const specRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
-  const subtitleRef = useRef<HTMLParagraphElement>(null);
-  const buttonsRef = useRef<HTMLDivElement>(null);
+  const copyRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-
-      tl.from(headlineRef.current, {
-        y: 60,
+      tl.from(paneRef.current, {
+        y: 40,
         opacity: 0,
-        duration: 1,
+        scale: 0.98,
+        duration: 1.1,
       })
         .from(
-          subtitleRef.current,
-          {
-            opacity: 0,
-            y: 20,
-            duration: 0.8,
-          },
-          "-=0.4"
+          specRef.current,
+          { opacity: 0, x: -20, duration: 0.7 },
+          "-=0.5"
         )
         .from(
-          buttonsRef.current!.children,
-          {
-            y: 30,
-            opacity: 0,
-            duration: 0.6,
-            stagger: 0.15,
-          },
-          "-=0.3"
+          headlineRef.current,
+          { y: 40, opacity: 0, duration: 1 },
+          "-=0.5"
+        )
+        .from(
+          copyRef.current,
+          { y: 20, opacity: 0, duration: 0.8 },
+          "-=0.6"
+        )
+        .from(
+          ctaRef.current!.children,
+          { y: 20, opacity: 0, duration: 0.6, stagger: 0.1 },
+          "-=0.5"
         );
     }, sectionRef);
-
     return () => ctx.revert();
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative min-h-screen w-full overflow-hidden"
+      className="relative overflow-hidden text-white"
+      style={{
+        background: "#0f1420",
+        minHeight: "min(920px, 100vh)",
+      }}
     >
       {/* Background image */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0"
         style={{
-          backgroundImage:
-            "url('/images/Passende-Fenster-Hintergrund-scaled.jpg')",
+          backgroundImage: "url('/images/Passende-Fenster-Hintergrund-scaled.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center right",
+          filter: "saturate(0.9) brightness(0.78)",
         }}
       />
-
-      {/* Dark gradient overlay — dark left, transparent right */}
+      {/* Gradient overlay — lighter so glass has something to show through */}
       <div
         className="absolute inset-0"
         style={{
           background:
-            "linear-gradient(to right, rgba(33, 41, 52, 0.92) 0%, rgba(33, 41, 52, 0.75) 40%, rgba(33, 41, 52, 0.3) 70%, transparent 100%)",
+            "linear-gradient(100deg, rgba(15,20,32,0.88) 0%, rgba(15,20,32,0.55) 40%, rgba(15,20,32,0.25) 75%, rgba(15,20,32,0.15) 100%)",
+        }}
+      />
+      {/* Grid lines — read as mullions */}
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px)",
+          backgroundSize: "80px 80px",
+          maskImage:
+            "radial-gradient(ellipse 80% 60% at 30% 50%, black, transparent 70%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 80% 60% at 30% 50%, black, transparent 70%)",
         }}
       />
 
-      {/* Content */}
-      <div className="relative z-10 flex min-h-screen items-center">
-        <div className="mx-auto w-full max-w-7xl px-6 py-24 sm:px-8 lg:px-12">
-          <div className="max-w-3xl">
+      <div
+        className="relative mx-auto grid max-w-[1440px]"
+        style={{
+          padding: "180px clamp(24px, 5vw, 72px) 100px",
+          minHeight: "min(920px, 100vh)",
+          alignContent: "center",
+        }}
+      >
+        {/* Hero glass pane */}
+        <div
+          ref={paneRef}
+          className="relative overflow-hidden"
+          style={{
+            padding: "clamp(40px, 5vw, 72px) clamp(28px, 5vw, 64px)",
+            background: "rgba(20,25,34,0.28)",
+            backdropFilter: "saturate(180%) blur(26px)",
+            WebkitBackdropFilter: "saturate(180%) blur(26px)",
+            border: "1px solid rgba(255,255,255,0.14)",
+            borderRadius: 28,
+            boxShadow:
+              "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.25)",
+            maxWidth: 1080,
+          }}
+        >
+          <span className="glass-edge-light" aria-hidden />
+          <span className="glass-shine" aria-hidden />
+          <span className="mullion-cross" aria-hidden />
+
+          {/* Corner ticks */}
+          {[
+            { top: 12, left: 12, bt: true, bl: true },
+            { top: 12, right: 12, bt: true, br: true },
+            { bottom: 12, left: 12, bb: true, bl: true },
+            { bottom: 12, right: 12, bb: true, br: true },
+          ].map((t, i) => (
+            <span
+              key={i}
+              aria-hidden
+              style={{
+                position: "absolute",
+                width: 14,
+                height: 14,
+                top: t.top,
+                left: t.left,
+                right: t.right,
+                bottom: t.bottom,
+                borderTop: t.bt ? "1px solid rgba(255,255,255,0.45)" : undefined,
+                borderLeft: t.bl ? "1px solid rgba(255,255,255,0.45)" : undefined,
+                borderRight: t.br ? "1px solid rgba(255,255,255,0.45)" : undefined,
+                borderBottom: t.bb ? "1px solid rgba(255,255,255,0.45)" : undefined,
+              }}
+            />
+          ))}
+
+          <div className="relative">
+            <div
+              ref={specRef}
+              className="mono up mb-8 flex items-center gap-4 text-[11px]"
+              style={{ color: "var(--brand-primary)" }}
+            >
+              <span
+                style={{
+                  width: 40,
+                  height: 1,
+                  background: "var(--brand-primary)",
+                }}
+              />
+              PF/2026 — KATALOG 05
+            </div>
+
             <h1
               ref={headlineRef}
-              className="heading-display text-white text-balance"
+              className="text-balance m-0"
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(44px, 7.5vw, 118px)",
+                fontWeight: 800,
+                lineHeight: 0.94,
+                letterSpacing: "-0.035em",
+                maxWidth: "16ch",
+                color: "#fff",
+                hyphens: "auto",
+              }}
             >
-              Passende Fenster
+              Fenster,
               <br />
-              und Türen für
-              <br />
-              <span className="text-[var(--brand-primary)]">
-                jeden Geschmack
-              </span>
+              die{" "}
+              <em
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontStyle: "italic",
+                  fontWeight: 500,
+                  color: "var(--brand-primary)",
+                }}
+              >
+                passen
+              </em>{" "}
+              —<br />
+              millimetergenau.
             </h1>
 
-            <p
-              ref={subtitleRef}
-              className="mt-6 max-w-xl text-lg leading-relaxed text-white/80 sm:mt-8 sm:text-xl"
-              style={{ fontFamily: "var(--font-sans)" }}
-            >
-              Suchen Sie die besten Fenster und Türen aus unserem Sortiment aus
-            </p>
-
             <div
-              ref={buttonsRef}
-              className="mt-8 flex flex-col gap-4 sm:mt-10 sm:flex-row sm:gap-5"
+              className="pf-hero-bottom mt-10 grid items-end gap-10"
+              style={{ gridTemplateColumns: "minmax(0,1fr) auto" }}
             >
-              <a
-                href="#fenster-systeme"
-                className="inline-flex items-center justify-center rounded-lg bg-[var(--brand-primary)] px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:bg-[var(--brand-secondary)] hover:shadow-lg hover:shadow-[var(--brand-primary)]/25 sm:w-auto"
+              <p
+                ref={copyRef}
+                className="m-0"
+                style={{
+                  fontSize: "clamp(15px, 1.3vw, 19px)",
+                  lineHeight: 1.55,
+                  color: "rgba(255,255,255,0.85)",
+                  maxWidth: "44ch",
+                }}
               >
-                Unser Katalog
-              </a>
-              <Link
-                href="/anfrage"
-                className="inline-flex items-center justify-center rounded-lg border-2 border-white/60 px-8 py-4 text-base font-semibold text-white transition-all duration-300 hover:border-white hover:bg-white/10 sm:w-auto"
-              >
-                Jetzt anfragen
-              </Link>
+                Profile von{" "}
+                <b style={{ color: "#fff" }}>
+                  Gealan, Aluplast, Salamander, Deceuninck
+                </b>{" "}
+                und Schüco — konfiguriert auf Ihr Maß, geliefert nach ganz
+                Deutschland, montiert vom Profi.
+              </p>
+              <div ref={ctaRef} className="flex flex-wrap gap-3">
+                <Link
+                  href="/konfigurator"
+                  className="inline-flex items-center gap-2.5 rounded-full text-[15px] font-semibold text-white transition-transform hover:scale-[1.03]"
+                  style={{
+                    padding: "16px 28px",
+                    minHeight: 44,
+                    background: "var(--brand-primary)",
+                    fontFamily: "var(--font-display)",
+                    boxShadow: "0 12px 30px -10px rgba(0,159,227,0.55)",
+                  }}
+                >
+                  Konfigurator starten
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                  >
+                    <path d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                </Link>
+                <Link
+                  href="/anfrage"
+                  className="inline-flex items-center rounded-full text-[15px] font-medium text-white"
+                  style={{
+                    padding: "16px 24px",
+                    minHeight: 44,
+                    background: "rgba(20,25,34,0.25)",
+                    border: "1px solid rgba(255,255,255,0.14)",
+                    backdropFilter: "blur(14px)",
+                    WebkitBackdropFilter: "blur(14px)",
+                    fontFamily: "var(--font-display)",
+                  }}
+                >
+                  Beratung anfragen
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2">
-        <a
-          href="#warum-passende-fenster"
-          className="flex flex-col items-center gap-2 text-white/60 transition-colors hover:text-white"
-          aria-label="Nach unten scrollen"
-        >
-          <span
-            className="text-xs uppercase tracking-widest"
-            style={{ fontFamily: "var(--font-sans)" }}
-          >
-            Mehr erfahren
-          </span>
-          <ChevronDown className="h-6 w-6 animate-bounce" />
-        </a>
-      </div>
+      <style jsx>{`
+        .pf-hero-bottom {
+          grid-template-columns: minmax(0, 1fr) auto;
+        }
+        @media (max-width: 1100px) {
+          .pf-hero-bottom {
+            grid-template-columns: 1fr !important;
+            gap: 24px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
