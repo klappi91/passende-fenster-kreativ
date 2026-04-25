@@ -207,7 +207,7 @@ function VariantButton({
           className="h-10 w-5 bg-cover bg-center"
           style={{
             backgroundImage: outerImage ? `url(${outerImage})` : undefined,
-            backgroundColor: outerImage ? undefined : "#fafbfc",
+            backgroundColor: outerImage ? undefined : "var(--surface-canvas)",
           }}
           aria-label={`Außen ${outerName}`}
         />
@@ -215,7 +215,7 @@ function VariantButton({
           className="h-10 w-5 bg-cover bg-center"
           style={{
             backgroundImage: innerImage ? `url(${innerImage})` : undefined,
-            backgroundColor: innerImage ? undefined : "#ffffff",
+            backgroundColor: innerImage ? undefined : "var(--surface-card)",
           }}
           aria-label={`Innen ${innerName}`}
         />

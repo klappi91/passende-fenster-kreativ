@@ -25,7 +25,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {/* Brand Name */}
         <div className="mb-12">
-          <h2 className="font-[var(--font-display)] text-3xl font-bold tracking-tight text-white sm:text-4xl">
+          <h2 className="font-[var(--font-display)] text-3xl font-bold tracking-tight text-[var(--brand-light)] sm:text-4xl">
             Passende-Fenster.de
           </h2>
           <p className="mt-2 max-w-md text-sm text-white/60">

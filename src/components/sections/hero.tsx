@@ -14,33 +14,50 @@ export default function Hero() {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.from(paneRef.current, {
-        y: 40,
-        opacity: 0,
-        scale: 0.98,
-        duration: 1.1,
-      })
-        .from(
-          specRef.current,
-          { opacity: 0, x: -20, duration: 0.7 },
-          "-=0.5"
-        )
-        .from(
-          headlineRef.current,
-          { y: 40, opacity: 0, duration: 1 },
-          "-=0.5"
-        )
-        .from(
-          copyRef.current,
-          { y: 20, opacity: 0, duration: 0.8 },
-          "-=0.6"
-        )
-        .from(
-          ctaRef.current!.children,
-          { y: 20, opacity: 0, duration: 0.6, stagger: 0.1 },
-          "-=0.5"
-        );
+      const mm = gsap.matchMedia();
+      mm.add(
+        {
+          isMotionOK: "(prefers-reduced-motion: no-preference)",
+          isReduced: "(prefers-reduced-motion: reduce)",
+        },
+        (context) => {
+          const { isMotionOK } = context.conditions as {
+            isMotionOK: boolean;
+            isReduced: boolean;
+          };
+          if (!isMotionOK) {
+            // Reduced motion: render final state immediately, no entrance animation.
+            return;
+          }
+          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+          tl.from(paneRef.current, {
+            y: 40,
+            opacity: 0,
+            scale: 0.98,
+            duration: 1.1,
+          })
+            .from(
+              specRef.current,
+              { opacity: 0, x: -20, duration: 0.7 },
+              "-=0.5"
+            )
+            .from(
+              headlineRef.current,
+              { y: 40, opacity: 0, duration: 1 },
+              "-=0.5"
+            )
+            .from(
+              copyRef.current,
+              { y: 20, opacity: 0, duration: 0.8 },
+              "-=0.6"
+            )
+            .from(
+              ctaRef.current!.children,
+              { y: 20, opacity: 0, duration: 0.6, stagger: 0.1 },
+              "-=0.5"
+            );
+        }
+      );
     }, sectionRef);
     return () => ctx.revert();
   }, []);
@@ -50,7 +67,7 @@ export default function Hero() {
       ref={sectionRef}
       className="relative overflow-hidden text-white"
       style={{
-        background: "#0f1420",
+        background: "var(--surface-deep)",
         minHeight: "min(920px, 100vh)",
       }}
     >
@@ -97,17 +114,20 @@ export default function Hero() {
         {/* Hero glass pane */}
         <div
           ref={paneRef}
-          className="relative overflow-hidden"
+          className="pf-hero-pane relative overflow-hidden"
           style={{
+            ["--glass-blur" as string]: "26px",
             padding: "clamp(40px, 5vw, 72px) clamp(28px, 5vw, 64px)",
             background: "rgba(20,25,34,0.28)",
-            backdropFilter: "saturate(180%) blur(26px)",
-            WebkitBackdropFilter: "saturate(180%) blur(26px)",
-            border: "1px solid rgba(255,255,255,0.14)",
+            backdropFilter: "saturate(180%) blur(var(--glass-blur, 26px))",
+            WebkitBackdropFilter: "saturate(180%) blur(var(--glass-blur, 26px))",
+            border: "1px solid var(--glass-dark-edge)",
             borderRadius: 28,
             boxShadow:
               "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.25)",
             maxWidth: 1080,
+            transform: "translateZ(0)",
+            willChange: "transform",
           }}
         >
           <span className="glass-edge-light" aria-hidden />
@@ -166,7 +186,7 @@ export default function Hero() {
                 lineHeight: 0.94,
                 letterSpacing: "-0.035em",
                 maxWidth: "16ch",
-                color: "#fff",
+                color: "var(--brand-light)",
                 hyphens: "auto",
               }}
             >
@@ -202,7 +222,7 @@ export default function Hero() {
                 }}
               >
                 Profile von{" "}
-                <b style={{ color: "#fff" }}>
+                <b style={{ color: "var(--brand-light)" }}>
                   Gealan, Aluplast, Salamander, Deceuninck
                 </b>{" "}
                 und Schüco — konfiguriert auf Ihr Maß, geliefert nach ganz
@@ -239,7 +259,7 @@ export default function Hero() {
                     padding: "16px 24px",
                     minHeight: 44,
                     background: "rgba(20,25,34,0.25)",
-                    border: "1px solid rgba(255,255,255,0.14)",
+                    border: "1px solid var(--glass-dark-edge)",
                     backdropFilter: "blur(14px)",
                     WebkitBackdropFilter: "blur(14px)",
                     fontFamily: "var(--font-display)",
@@ -257,7 +277,7 @@ export default function Hero() {
         .pf-hero-bottom {
           grid-template-columns: minmax(0, 1fr) auto;
         }
-        @media (max-width: 1100px) {
+        @media (max-width: 1024px) {
           .pf-hero-bottom {
             grid-template-columns: 1fr !important;
             gap: 24px !important;

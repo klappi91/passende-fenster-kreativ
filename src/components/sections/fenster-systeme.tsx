@@ -85,7 +85,7 @@ function Spec({
           fontFamily: "var(--font-display)",
           fontWeight: 700,
           letterSpacing: "-0.015em",
-          color: "#fff",
+          color: "var(--brand-light)",
         }}
       >
         {value}
@@ -134,7 +134,7 @@ export default function FensterSysteme() {
                 fontSize: "clamp(36px, 5vw, 72px)",
                 lineHeight: 1.02,
                 letterSpacing: "-0.025em",
-                color: "#fff",
+                color: "var(--brand-light)",
                 overflowWrap: "anywhere",
                 hyphens: "auto",
               }}
@@ -251,7 +251,7 @@ export default function FensterSysteme() {
               background: "rgba(20,25,34,0.35)",
               backdropFilter: "saturate(180%) blur(18px)",
               WebkitBackdropFilter: "saturate(180%) blur(18px)",
-              border: "1px solid rgba(255,255,255,0.14)",
+              border: "1px solid var(--glass-dark-edge)",
               borderRadius: 20,
               boxShadow:
                 "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12)",
@@ -335,7 +335,7 @@ export default function FensterSysteme() {
                   background: "rgba(20,25,34,0.45)",
                   backdropFilter: "saturate(180%) blur(10px)",
                   WebkitBackdropFilter: "saturate(180%) blur(10px)",
-                  border: "1px solid rgba(255,255,255,0.14)",
+                  border: "1px solid var(--glass-dark-edge)",
                   fontSize: 10,
                   letterSpacing: 0.08,
                   color: "rgba(255,255,255,0.85)",
@@ -371,7 +371,7 @@ export default function FensterSysteme() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 1100px) {
+        @media (max-width: 1024px) {
           .pf-sys-head {
             grid-template-columns: 1fr !important;
           }

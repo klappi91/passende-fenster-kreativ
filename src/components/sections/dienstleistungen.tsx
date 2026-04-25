@@ -85,7 +85,7 @@ export default function Dienstleistungen() {
                 fontSize: "clamp(36px, 5vw, 72px)",
                 lineHeight: 1.02,
                 letterSpacing: "-0.025em",
-                color: "#fff",
+                color: "var(--brand-light)",
                 overflowWrap: "anywhere",
                 hyphens: "auto",
               }}
@@ -126,7 +126,7 @@ export default function Dienstleistungen() {
                   style={{
                     padding: "10px 18px",
                     minHeight: 44,
-                    background: tab === k ? "#fff" : "transparent",
+                    background: tab === k ? "var(--surface-card)" : "transparent",
                     color: tab === k ? "var(--brand-dark)" : "rgba(255,255,255,0.7)",
                     fontFamily: "var(--font-display)",
                   }}
@@ -167,7 +167,7 @@ export default function Dienstleistungen() {
                 style={{
                   fontFamily: "var(--font-display)",
                   fontWeight: 600,
-                  color: "#fff",
+                  color: "var(--brand-light)",
                 }}
               >
                 {s.name}
@@ -203,7 +203,7 @@ export default function Dienstleistungen() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 1100px) {
+        @media (max-width: 1024px) {
           .pf-serv-head {
             grid-template-columns: 1fr !important;
           }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Phone, Mail, MapPin } from "lucide-react";
+import { Phone, Mail, MapPin, Check, AlertTriangle } from "lucide-react";
 
 interface FormData {
   vorname: string;
@@ -39,15 +39,18 @@ function ContactRow({
   const Icon =
     icon === "phone" ? Phone : icon === "mail" ? Mail : MapPin;
   const commonStyle: React.CSSProperties = {
+    ["--glass-blur" as string]: "16px",
     padding: "14px 18px",
     minHeight: 44,
     borderRadius: 14,
     background: "rgba(255,255,255,0.14)",
-    backdropFilter: "saturate(160%) blur(16px)",
-    WebkitBackdropFilter: "saturate(160%) blur(16px)",
+    backdropFilter: "saturate(160%) blur(var(--glass-blur, 16px))",
+    WebkitBackdropFilter: "saturate(160%) blur(var(--glass-blur, 16px))",
     border: "1px solid rgba(255,255,255,0.28)",
     boxShadow:
       "inset 0 1px 0 rgba(255,255,255,0.4), 0 10px 30px -14px rgba(0,0,0,0.25)",
+    transform: "translateZ(0)",
+    willChange: "transform",
   };
   const Inner = (
     <>
@@ -90,7 +93,7 @@ function ContactRow({
     return (
       <a
         href={href}
-        className="relative grid items-center gap-4 overflow-hidden text-white"
+        className="pf-anf-contact-row relative grid items-center gap-4 overflow-hidden text-white"
         style={{
           ...commonStyle,
           gridTemplateColumns: "44px 1fr",
@@ -102,7 +105,7 @@ function ContactRow({
   }
   return (
     <div
-      className="relative grid items-center gap-4 overflow-hidden text-white"
+      className="pf-anf-contact-row relative grid items-center gap-4 overflow-hidden text-white"
       style={{
         ...commonStyle,
         gridTemplateColumns: "44px 1fr",
@@ -145,7 +148,7 @@ function Input({
         onChange={onChange}
         placeholder={placeholder}
         required={required}
-        className="text-[15px] outline-none"
+        className="text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
         style={{
           padding: "14px 16px",
           minHeight: 44,
@@ -153,15 +156,19 @@ function Input({
           border: "1px solid var(--brand-border)",
           fontFamily: "var(--font-sans)",
           color: "var(--brand-heading)",
-          background: "#fff",
+          background: "var(--surface-card)",
         }}
       />
     </label>
   );
 }
 
+type SubmitStatus = "idle" | "submitting" | "success" | "error";
+
 export default function AnfrageForm() {
   const [form, setForm] = useState<FormData>(initial);
+  const [status, setStatus] = useState<SubmitStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState<string>("");
 
   function handleChange(
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -169,11 +176,43 @@ export default function AnfrageForm() {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   }
 
-  function handleSubmit(e: FormEvent) {
+  async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    alert(
-      "Vielen Dank für Ihre Anfrage! Wir melden uns schnellstmöglich bei Ihnen."
-    );
+    if (status === "submitting") return;
+    setStatus("submitting");
+    setErrorMessage("");
+
+    try {
+      const res = await fetch("/api/anfrage", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+
+      let payload: { ok?: boolean; error?: string } | null = null;
+      try {
+        payload = (await res.json()) as { ok?: boolean; error?: string };
+      } catch {
+        payload = null;
+      }
+
+      if (!res.ok || !payload?.ok) {
+        const fallback =
+          res.status === 400
+            ? "Bitte überprüfen Sie Ihre Eingaben."
+            : "Senden fehlgeschlagen. Bitte später erneut versuchen oder uns direkt anrufen.";
+        setErrorMessage(payload?.error ?? fallback);
+        setStatus("error");
+        return;
+      }
+
+      setStatus("success");
+    } catch {
+      setErrorMessage(
+        "Verbindung zum Server fehlgeschlagen. Bitte prüfen Sie Ihre Internetverbindung."
+      );
+      setStatus("error");
+    }
   }
 
   return (
@@ -206,7 +245,7 @@ export default function AnfrageForm() {
                 fontSize: "clamp(38px, 5.5vw, 78px)",
                 lineHeight: 0.98,
                 letterSpacing: "-0.03em",
-                color: "#fff",
+                color: "var(--brand-light)",
               }}
             >
               Reden wir
@@ -253,116 +292,202 @@ export default function AnfrageForm() {
             </div>
           </div>
 
-          <form
-            onSubmit={handleSubmit}
-            className="grid content-start gap-4.5"
-            style={{
-              background: "#fff",
-              color: "var(--brand-text)",
-              borderRadius: 24,
-              padding: "clamp(24px, 3.5vw, 44px)",
-              boxShadow: "0 30px 80px -20px rgba(0,0,0,0.3)",
-              gap: 16,
-            }}
-          >
+          {status === "success" ? (
             <div
+              role="status"
+              aria-live="polite"
+              className="grid content-start gap-4"
               style={{
-                fontFamily: "var(--font-display)",
-                fontWeight: 700,
-                fontSize: 22,
-                letterSpacing: "-0.015em",
-                color: "var(--brand-heading)",
-                marginBottom: 4,
+                background: "var(--surface-card)",
+                color: "var(--brand-text)",
+                borderRadius: 24,
+                padding: "clamp(24px, 3.5vw, 44px)",
+                boxShadow: "0 30px 80px -20px rgba(0,0,0,0.3)",
               }}
             >
-              Anfrage senden
-            </div>
-            <div className="grid gap-3.5 sm:grid-cols-2">
-              <Input
-                label="Vorname"
-                name="vorname"
-                value={form.vorname}
-                onChange={handleChange}
-                placeholder="Max"
-              />
-              <Input
-                label="Nachname"
-                name="nachname"
-                value={form.nachname}
-                onChange={handleChange}
-                placeholder="Mustermann"
-              />
-            </div>
-            <Input
-              label="E-Mail"
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="max@beispiel.de"
-              type="email"
-              required
-            />
-            <Input
-              label="Telefon (optional)"
-              name="telefon"
-              value={form.telefon}
-              onChange={handleChange}
-              placeholder="0151 …"
-              type="tel"
-            />
-            <label className="grid gap-1.5">
               <span
-                className="mono up text-[10px]"
-                style={{ color: "var(--brand-heading)" }}
-              >
-                Nachricht
-              </span>
-              <textarea
-                name="nachricht"
-                value={form.nachricht}
-                onChange={handleChange}
-                rows={4}
-                placeholder="z. B. 4 Fenster, 1.200 × 1.400 mm, Gealan S 9000, Mahagoni außen …"
-                className="w-full resize-y text-[15px] outline-none"
+                className="grid h-12 w-12 place-items-center rounded-full"
                 style={{
-                  padding: "14px 16px",
-                  borderRadius: 12,
+                  background: "color-mix(in srgb, var(--brand-primary) 14%, white)",
+                  color: "var(--brand-primary)",
                   border: "1px solid var(--brand-border)",
-                  fontFamily: "var(--font-sans)",
-                  color: "var(--brand-heading)",
-                  background: "#fff",
                 }}
-              />
-            </label>
-            <button
-              type="submit"
-              className="mt-1.5 flex items-center justify-center gap-2.5 text-[15px] font-semibold text-white transition-transform hover:scale-[1.01]"
+                aria-hidden
+              >
+                <Check className="h-6 w-6" strokeWidth={2.5} />
+              </span>
+              <div
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontWeight: 700,
+                  fontSize: 24,
+                  letterSpacing: "-0.015em",
+                  color: "var(--brand-heading)",
+                }}
+              >
+                Anfrage eingegangen
+              </div>
+              <p
+                className="m-0"
+                style={{
+                  fontSize: 16,
+                  lineHeight: 1.55,
+                  color: "var(--brand-text)",
+                }}
+              >
+                Vielen Dank — wir melden uns innerhalb von 24 Stunden persönlich
+                bei Ihnen. Bei dringenden Anliegen erreichen Sie uns telefonisch
+                unter{" "}
+                <a
+                  href={`tel:${brand.phone.replace(/\s/g, "")}`}
+                  style={{
+                    color: "var(--brand-primary)",
+                    textDecoration: "underline",
+                  }}
+                >
+                  {brand.phone}
+                </a>
+                .
+              </p>
+            </div>
+          ) : (
+            <form
+              onSubmit={handleSubmit}
+              aria-busy={status === "submitting"}
+              className="grid content-start gap-4.5"
               style={{
-                padding: "16px 20px",
-                minHeight: 44,
-                borderRadius: 12,
-                background: "var(--brand-dark)",
-                fontFamily: "var(--font-display)",
+                background: "var(--surface-card)",
+                color: "var(--brand-text)",
+                borderRadius: 24,
+                padding: "clamp(24px, 3.5vw, 44px)",
+                boxShadow: "0 30px 80px -20px rgba(0,0,0,0.3)",
+                gap: 16,
               }}
             >
-              Anfrage abschicken
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
+              <div
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontWeight: 700,
+                  fontSize: 22,
+                  letterSpacing: "-0.015em",
+                  color: "var(--brand-heading)",
+                  marginBottom: 4,
+                }}
               >
-                <path d="M5 12h14M13 5l7 7-7 7" />
-              </svg>
-            </button>
-          </form>
+                Anfrage senden
+              </div>
+              <div className="grid gap-3.5 sm:grid-cols-2">
+                <Input
+                  label="Vorname"
+                  name="vorname"
+                  value={form.vorname}
+                  onChange={handleChange}
+                  placeholder="Max"
+                />
+                <Input
+                  label="Nachname"
+                  name="nachname"
+                  value={form.nachname}
+                  onChange={handleChange}
+                  placeholder="Mustermann"
+                />
+              </div>
+              <Input
+                label="E-Mail"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="max@beispiel.de"
+                type="email"
+                required
+              />
+              <Input
+                label="Telefon (optional)"
+                name="telefon"
+                value={form.telefon}
+                onChange={handleChange}
+                placeholder="0151 …"
+                type="tel"
+              />
+              <label className="grid gap-1.5">
+                <span
+                  className="mono up text-[10px]"
+                  style={{ color: "var(--brand-heading)" }}
+                >
+                  Nachricht
+                </span>
+                <textarea
+                  name="nachricht"
+                  value={form.nachricht}
+                  onChange={handleChange}
+                  rows={4}
+                  placeholder="z. B. 4 Fenster, 1.200 × 1.400 mm, Gealan S 9000, Mahagoni außen …"
+                  className="w-full resize-y text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                  style={{
+                    padding: "14px 16px",
+                    borderRadius: 12,
+                    border: "1px solid var(--brand-border)",
+                    fontFamily: "var(--font-sans)",
+                    color: "var(--brand-heading)",
+                    background: "var(--surface-card)",
+                  }}
+                />
+              </label>
+              {status === "error" && errorMessage && (
+                <div
+                  role="alert"
+                  className="flex items-start gap-2 text-[13px]"
+                  style={{
+                    color: "var(--destructive, #b3261e)",
+                    background:
+                      "color-mix(in srgb, var(--destructive, #b3261e) 8%, white)",
+                    border:
+                      "1px solid color-mix(in srgb, var(--destructive, #b3261e) 30%, white)",
+                    borderRadius: 10,
+                    padding: "10px 12px",
+                  }}
+                >
+                  <AlertTriangle
+                    className="mt-[1px] h-4 w-4 shrink-0"
+                    aria-hidden
+                  />
+                  <span>{errorMessage}</span>
+                </div>
+              )}
+              <button
+                type="submit"
+                disabled={status === "submitting"}
+                className="mt-1.5 flex items-center justify-center gap-2.5 text-[15px] font-semibold text-white transition-transform hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-dark)]"
+                style={{
+                  padding: "16px 20px",
+                  minHeight: 44,
+                  borderRadius: 12,
+                  background: "var(--brand-dark)",
+                  fontFamily: "var(--font-display)",
+                }}
+              >
+                {status === "submitting" ? "Wird gesendet…" : "Anfrage abschicken"}
+                {status !== "submitting" && (
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    aria-hidden
+                  >
+                    <path d="M5 12h14M13 5l7 7-7 7" />
+                  </svg>
+                )}
+              </button>
+            </form>
+          )}
         </div>
       </div>
 
       <style jsx>{`
-        @media (max-width: 1100px) {
+        @media (max-width: 1024px) {
           .pf-anf-grid {
             grid-template-columns: 1fr !important;
           }

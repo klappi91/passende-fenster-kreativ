@@ -265,7 +265,7 @@ function NumberBox({
           step="10"
           value={value}
           onChange={(e) => onChange(Number(e.target.value) || 0)}
-          className="w-full bg-transparent px-4 py-3 text-2xl font-bold outline-none"
+          className="w-full rounded-[8px] bg-transparent px-4 py-3 text-2xl font-bold outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           style={{
             fontFamily: "var(--font-display)",
             color: "var(--konfig-price)",

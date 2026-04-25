@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { Minus, Plus } from "lucide-react";
 
 const steps = [
   {
@@ -55,7 +56,7 @@ function Field({
       <div
         className="grid overflow-hidden"
         style={{
-          gridTemplateColumns: "1fr auto",
+          gridTemplateColumns: "auto minmax(0,1fr) auto",
           border: "1px solid rgba(255,255,255,0.7)",
           borderRadius: 12,
           background: "rgba(255,255,255,0.7)",
@@ -65,6 +66,21 @@ function Field({
             "inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 12px -6px rgba(17,40,70,0.08)",
         }}
       >
+        <button
+          type="button"
+          aria-label="Wert verringern"
+          onClick={() => setValue(Math.max(min, value - 10))}
+          disabled={value <= min}
+          className="grid place-items-center hover:bg-[color-mix(in_oklch,var(--brand-primary),transparent_88%)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-0 focus-visible:rounded-[10px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          style={{
+            width: 44,
+            height: 44,
+            borderRight: "1px solid var(--brand-border)",
+            color: "var(--brand-primary)",
+          }}
+        >
+          <Minus className="size-5" aria-hidden />
+        </button>
         <input
           type="number"
           inputMode="numeric"
@@ -76,7 +92,7 @@ function Field({
             const next = Math.max(min, Math.min(max, isNaN(raw) ? min : raw));
             setValue(next);
           }}
-          className="no-spin w-full border-0 bg-transparent px-4 py-3 text-[18px] outline-none"
+          className="no-spin w-full border-0 bg-transparent px-2 py-3 text-[18px] text-center outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-0 focus-visible:rounded-[10px]"
           style={{
             fontFamily: "var(--font-display)",
             fontWeight: 600,
@@ -84,35 +100,21 @@ function Field({
             minHeight: 44,
           }}
         />
-        <div className="grid" style={{ gridTemplateRows: "1fr 1fr" }}>
-          <button
-            type="button"
-            aria-label="Wert erhöhen"
-            onClick={() => setValue(Math.min(max, value + 10))}
-            className="px-3 text-[12px]"
-            style={{
-              borderLeft: "1px solid var(--brand-border)",
-              color: "var(--brand-primary)",
-              minHeight: 22,
-            }}
-          >
-            ▲
-          </button>
-          <button
-            type="button"
-            aria-label="Wert verringern"
-            onClick={() => setValue(Math.max(min, value - 10))}
-            className="px-3 text-[12px]"
-            style={{
-              borderLeft: "1px solid var(--brand-border)",
-              borderTop: "1px solid var(--brand-border)",
-              color: "var(--brand-primary)",
-              minHeight: 22,
-            }}
-          >
-            ▼
-          </button>
-        </div>
+        <button
+          type="button"
+          aria-label="Wert erhöhen"
+          onClick={() => setValue(Math.min(max, value + 10))}
+          disabled={value >= max}
+          className="grid place-items-center hover:bg-[color-mix(in_oklch,var(--brand-primary),transparent_88%)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-0 focus-visible:rounded-[10px] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+          style={{
+            width: 44,
+            height: 44,
+            borderLeft: "1px solid var(--brand-border)",
+            color: "var(--brand-primary)",
+          }}
+        >
+          <Plus className="size-5" aria-hidden />
+        </button>
       </div>
     </label>
   );
@@ -134,15 +136,18 @@ function ConfigPreview() {
     <div
       className="pf-konf-preview relative overflow-hidden"
       style={{
+        ["--glass-blur" as string]: "20px",
         background: "rgba(255,255,255,0.7)",
-        backdropFilter: "saturate(160%) blur(20px)",
-        WebkitBackdropFilter: "saturate(160%) blur(20px)",
+        backdropFilter: "saturate(160%) blur(var(--glass-blur, 20px))",
+        WebkitBackdropFilter: "saturate(160%) blur(var(--glass-blur, 20px))",
         border: "1px solid rgba(255,255,255,0.55)",
         borderRadius: 20,
         boxShadow:
           "0 18px 50px -20px rgba(17,40,70,0.25), inset 0 1px 0 rgba(255,255,255,0.8)",
         display: "grid",
         gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)",
+        transform: "translateZ(0)",
+        willChange: "transform",
       }}
     >
       <span className="glass-edge-light" aria-hidden />
@@ -219,11 +224,11 @@ function ConfigPreview() {
             style={{
               width: dw,
               height: dh,
-              background: "#fff",
-              border: "10px solid #f0f4f8",
+              background: "var(--surface-card)",
+              border: "10px solid var(--frame-border)",
               borderRadius: 4,
               boxShadow:
-                "0 20px 60px -20px rgba(0,159,227,0.35), inset 0 0 0 1px #e2e8ef",
+                "0 20px 60px -20px rgba(0,159,227,0.35), inset 0 0 0 1px var(--frame-stroke)",
             }}
           >
             <div
@@ -257,6 +262,22 @@ function ConfigPreview() {
                 }}
               />
             </div>
+          </div>
+
+          {/* Mobile dim readout — replaces hidden dim lines ≤640px */}
+          <div
+            className="pf-konf-dim-mobile mono up text-[11px] absolute"
+            style={{
+              bottom: -28,
+              left: 0,
+              right: 0,
+              color: "var(--brand-primary)",
+              textAlign: "center",
+              fontWeight: 600,
+              letterSpacing: "0.04em",
+            }}
+          >
+            {width.toLocaleString("de-DE")} × {height.toLocaleString("de-DE")} mm
           </div>
         </div>
       </div>
@@ -363,7 +384,7 @@ function ConfigPreview() {
             background: "rgba(20,25,34,0.88)",
             backdropFilter: "saturate(180%) blur(20px)",
             WebkitBackdropFilter: "saturate(180%) blur(20px)",
-            border: "1px solid rgba(255,255,255,0.14)",
+            border: "1px solid var(--glass-dark-edge)",
             boxShadow:
               "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12)",
           }}
@@ -410,15 +431,24 @@ function ConfigPreview() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 1100px) {
+        @media (max-width: 1024px) {
           .pf-konf-preview {
             grid-template-columns: 1fr !important;
           }
+        }
+        .pf-konf-dim-mobile {
+          display: none;
         }
         @media (max-width: 640px) {
           .pf-konf-dim-w,
           .pf-konf-dim-h {
             display: none !important;
+          }
+          .pf-konf-dim-mobile {
+            display: block;
+          }
+          .pf-konf-preview > div:first-of-type {
+            padding-bottom: clamp(56px, 8vw, 80px) !important;
           }
         }
       `}</style>
@@ -570,7 +600,7 @@ export default function Konfigurator() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 1100px) {
+        @media (max-width: 1024px) {
           .pf-konf-head {
             grid-template-columns: 1fr !important;
           }

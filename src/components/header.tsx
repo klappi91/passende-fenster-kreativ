@@ -43,17 +43,20 @@ export default function Header() {
       }}
     >
       <div
-        className="relative flex items-center justify-between text-white"
+        className="pf-header-glass relative flex items-center justify-between text-white"
         style={{
+          ["--glass-blur" as string]: "22px",
           padding: "10px 10px 10px 22px",
           background: `rgba(20,25,34,${scrolled ? 0.62 : 0.5})`,
-          backdropFilter: "saturate(180%) blur(22px)",
-          WebkitBackdropFilter: "saturate(180%) blur(22px)",
-          border: "1px solid rgba(255,255,255,0.14)",
+          backdropFilter: "saturate(180%) blur(var(--glass-blur, 22px))",
+          WebkitBackdropFilter: "saturate(180%) blur(var(--glass-blur, 22px))",
+          border: "1px solid var(--glass-dark-edge)",
           borderRadius: 999,
           boxShadow:
             "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.25)",
           transition: "background 0.3s",
+          transform: "translateZ(0)",
+          willChange: "transform",
         }}
       >
         <span className="glass-shine" aria-hidden />
@@ -134,12 +137,14 @@ export default function Header() {
       {/* Mobile menu */}
       {open && (
         <div
-          className="relative mt-3 grid gap-1 overflow-hidden p-5"
+          className="pf-header-mobile-menu relative mt-3 grid gap-1 overflow-hidden p-5"
           style={{
             background: "rgba(20,25,34,0.55)",
-            backdropFilter: "saturate(180%) blur(24px)",
-            WebkitBackdropFilter: "saturate(180%) blur(24px)",
-            border: "1px solid rgba(255,255,255,0.14)",
+            // Mobile-only surface — directly use the gentler tier (12px)
+            // instead of going through the var override.
+            backdropFilter: "saturate(160%) blur(12px)",
+            WebkitBackdropFilter: "saturate(160%) blur(12px)",
+            border: "1px solid var(--glass-dark-edge)",
             borderRadius: 22,
             boxShadow:
               "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.25)",
@@ -176,6 +181,7 @@ export default function Header() {
       )}
 
       {/* Breakpoint rules for desktop↔mobile nav */}
+      {/* keep at 1100px — 5 nav items + brand + CTA don't fit at lg (1024px) */}
       <style jsx>{`
         :global(.pf-nav-desktop) {
           display: none;

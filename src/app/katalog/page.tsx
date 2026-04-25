@@ -34,7 +34,7 @@ export default function KatalogPage() {
         />
         <div className="relative mx-auto max-w-7xl px-6 sm:px-8 lg:px-12">
           <h1 className="heading-section text-white" data-animate="fade-up">
-            Unser <span className="text-gradient">Produktkatalog</span>
+            Unser <em style={{ color: 'var(--brand-primary)', fontStyle: 'italic', fontWeight: 500 }}>Produktkatalog</em>
           </h1>
           <p
             className="mt-4 max-w-2xl text-lg text-white/70 sm:text-xl"

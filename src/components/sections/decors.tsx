@@ -65,7 +65,7 @@ export default function Decors() {
                 style={{
                   aspectRatio: "4/5",
                   borderRadius: 14,
-                  background: "#f2f3f5",
+                  background: "var(--surface-muted)",
                   boxShadow: "0 10px 30px -12px rgba(33,41,52,0.2)",
                 }}
               >
@@ -116,7 +116,7 @@ export default function Decors() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 1100px) {
+        @media (max-width: 1024px) {
           .pf-deco-grid {
             grid-template-columns: 1fr !important;
           }

@@ -171,7 +171,7 @@ function MeasureInput({
             onChange(v === "" ? null : Number(v));
           }}
           placeholder="–"
-          className="w-full bg-transparent px-5 py-4 text-3xl font-bold outline-none placeholder:text-[var(--konfig-stroke-muted)]"
+          className="w-full rounded-[8px] bg-transparent px-5 py-4 text-3xl font-bold outline-none placeholder:text-[var(--konfig-stroke-muted)] focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
           style={{ fontFamily: "var(--font-display)", letterSpacing: "-0.01em" }}
           aria-invalid={outOfRange}
         />

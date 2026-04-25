@@ -139,7 +139,7 @@ export default function Usp() {
                   fontSize: "clamp(28px, 3.6vw, 48px)",
                   lineHeight: 1.05,
                   letterSpacing: "-0.025em",
-                  color: "#fff",
+                  color: "var(--brand-light)",
                   overflowWrap: "anywhere",
                   hyphens: "auto",
                 }}
@@ -190,7 +190,7 @@ export default function Usp() {
               }> = [
                 { bg: "var(--brand-light)", accent: "var(--brand-primary)" },
                 {
-                  bg: "#fff",
+                  bg: "var(--surface-card)",
                   accent: "var(--brand-secondary)",
                   border: true,
                 },
@@ -276,7 +276,7 @@ export default function Usp() {
       </div>
 
       <style jsx>{`
-        @media (max-width: 1100px) {
+        @media (max-width: 1024px) {
           .pf-usp-head {
             grid-template-columns: 1fr !important;
           }

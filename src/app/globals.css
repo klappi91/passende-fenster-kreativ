@@ -92,6 +92,14 @@
   --brand-heading: #212934;
   --brand-light: #f2f8fc;
 
+  /* Surface tokens (canvas, card, frame) */
+  --surface-canvas: #fafbfc;       /* page-section neutral background */
+  --surface-card: #ffffff;         /* opaque card / form surfaces */
+  --frame-border: #f0f4f8;         /* heavy decorative window-frame border */
+  --frame-stroke: #e2e8ef;         /* inner stroke / subtle inset border */
+  --surface-deep: #0f1420;         /* hero deep-night background */
+  --surface-muted: #f2f3f5;        /* light gray neutral */
+
   /* Konfigurator tokens (siehe specs/konfigurator-design.md §2) */
   --konfig-canvas: #fafbfc;
   --konfig-grid: rgba(0, 159, 227, 0.04);
@@ -108,6 +116,9 @@
 
   /* Brand border (referenced by glass borders + konfigurator controls) */
   --brand-border: #e2e2e2;
+
+  /* Glass-dark canonical edge — used across hero pane, header, detail cards */
+  --glass-dark-edge: rgba(255, 255, 255, 0.14);
 }
 
 @layer base {
@@ -131,12 +142,6 @@
 @layer utilities {
   .text-balance {
     text-wrap: balance;
-  }
-  .text-gradient {
-    background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
   }
   .bg-brand-gradient {
     background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
@@ -252,7 +257,7 @@
   background: rgba(20, 25, 34, 0.45);
   backdrop-filter: saturate(180%) blur(22px);
   -webkit-backdrop-filter: saturate(180%) blur(22px);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  border: 1px solid var(--glass-dark-edge);
   box-shadow:
     0 18px 50px -18px rgba(0, 0, 0, 0.55),
     inset 0 1px 0 rgba(255, 255, 255, 0.12),
@@ -329,4 +334,24 @@
 }
 .no-spin {
   -moz-appearance: textfield;
+}
+
+/* Mobile glass-tier — gentler blur for performance.
+   Kreativ design stays glass-y; just reduce the GPU cost. */
+@media (max-width: 768px) {
+  .glass-light,
+  .glass-dark {
+    backdrop-filter: saturate(140%) blur(10px);
+    -webkit-backdrop-filter: saturate(140%) blur(10px);
+  }
+
+  /* Inline-styled glass surfaces consume `--glass-blur` from CSS var.
+     Override the variable on mobile to lower GPU cost while keeping
+     the glass aesthetic intact. */
+  .pf-hero-pane,
+  .pf-header-glass,
+  .pf-konf-preview,
+  .pf-anf-contact-row {
+    --glass-blur: 12px;
+  }
 }
