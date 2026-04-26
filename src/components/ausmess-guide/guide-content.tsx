@@ -84,7 +84,7 @@ export function GuideContent() {
         <p className="text-base leading-relaxed text-[var(--brand-text)]">
           Im Altbau ist das bestehende Fenster noch vorhanden. Messe das
           vorhandene <strong>Stock-Außenmaß</strong> (also den Holz- oder
-          Kunststoffrahmen außen umlaufend) — das ist meistens dein Bestellmaß,
+          Kunststoffrahmen außen umlaufend) — das ist meistens Ihr Bestellmaß,
           falls derselbe Einbautyp erhalten bleibt.
         </p>
         <ol className="mt-5 list-decimal space-y-3 pl-5 text-base text-[var(--brand-text)]">
@@ -103,8 +103,8 @@ export function GuideContent() {
           </li>
           <li>
             <strong>Einbauluft berücksichtigen</strong> (siehe Tabelle unten) —
-            falls du nicht das vorhandene Außenmaß, sondern die Maueröffnung
-            als Basis nimmst.
+            falls Sie nicht das vorhandene Außenmaß, sondern die Maueröffnung
+            als Basis nehmen.
           </li>
         </ol>
       </Section>
@@ -112,7 +112,7 @@ export function GuideContent() {
       {/* 6. Neubau */}
       <Section id="neubau" title="Im Neubau messen" icon={<Layers className="h-6 w-6" />}>
         <p className="text-base leading-relaxed text-[var(--brand-text)]">
-          Im Neubau gibt es noch kein Fenster — du misst direkt die
+          Im Neubau gibt es noch kein Fenster — Sie messen direkt die
           <strong> lichte Maueröffnung</strong>.
         </p>
         <ol className="mt-5 list-decimal space-y-3 pl-5 text-base text-[var(--brand-text)]">
@@ -173,8 +173,8 @@ export function GuideContent() {
         </p>
         <p className="mt-3 text-base leading-relaxed text-[var(--brand-text)]">
           Typische Kastenhöhen:{" "}
-          <strong>140 / 180 / 220 / 240 mm</strong>. Miss bei Unsicherheit
-          deinen Bestandskasten oder wähle den gewünschten Kasten direkt in der
+          <strong>140 / 180 / 220 / 240 mm</strong>. Bei Unsicherheit messen Sie
+          Ihren Bestandskasten oder wählen den gewünschten Kasten direkt in der
           Konfiguration — wir ziehen die Höhe automatisch ab.
         </p>
         <div className="mt-4 flex gap-3 rounded-xl bg-[var(--konfig-chip-idle-bg)] p-4">
@@ -201,7 +201,7 @@ export function GuideContent() {
           <li>• <strong>50 mm</strong> — bei Altbau-Versätzen</li>
         </ul>
         <p className="mt-3 text-base leading-relaxed text-[var(--brand-text)]">
-          Wähle die kleinste Höhe, mit der dein gewünschter Innenbank-Übergang
+          Wählen Sie die kleinste Höhe, mit der Ihr gewünschter Innenbank-Übergang
           noch funktioniert. Im Zweifel fragen wir bei der Bestellung nach.
         </p>
       </Section>
@@ -219,7 +219,7 @@ export function GuideContent() {
             className="mt-1 text-2xl font-bold sm:text-3xl"
             style={{ fontFamily: "var(--font-display)" }}
           >
-            Dein Fenster konfigurieren
+            Ihr Fenster konfigurieren
           </h3>
           <p className="mx-auto mt-3 max-w-lg text-white/85">
             Maße eingeben, passende Profile vergleichen, unverbindliches

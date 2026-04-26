@@ -6,7 +6,7 @@ export default function LegalLayout({
   title: string;
 }) {
   return (
-    <main className="pt-28 pb-20">
+    <main id="main" className="pt-28 pb-20">
       <div className="mx-auto max-w-3xl px-6">
         <h1 className="heading-section mb-8" style={{ color: "var(--brand-heading)" }}>
           {title}

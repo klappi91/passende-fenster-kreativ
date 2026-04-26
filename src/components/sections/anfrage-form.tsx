@@ -25,6 +25,19 @@ const brand = {
   address: { street: "Vor der Seelhorst 82c", city: "30519 Hannover" },
 };
 
+const CONTACT_ROW_STYLE: React.CSSProperties = {
+  ["--glass-blur" as string]: "16px",
+  padding: "14px 18px",
+  minHeight: 44,
+  borderRadius: 14,
+  background: "var(--glass-dark-edge)",
+  backdropFilter: "saturate(160%) blur(var(--glass-blur, 16px))",
+  WebkitBackdropFilter: "saturate(160%) blur(var(--glass-blur, 16px))",
+  border: "1px solid rgba(255,255,255,0.28)",
+  boxShadow:
+    "inset 0 1px 0 rgba(255,255,255,0.4), 0 10px 30px -14px rgba(0,0,0,0.25)",
+};
+
 function ContactRow({
   icon,
   label,
@@ -38,20 +51,6 @@ function ContactRow({
 }) {
   const Icon =
     icon === "phone" ? Phone : icon === "mail" ? Mail : MapPin;
-  const commonStyle: React.CSSProperties = {
-    ["--glass-blur" as string]: "16px",
-    padding: "14px 18px",
-    minHeight: 44,
-    borderRadius: 14,
-    background: "rgba(255,255,255,0.14)",
-    backdropFilter: "saturate(160%) blur(var(--glass-blur, 16px))",
-    WebkitBackdropFilter: "saturate(160%) blur(var(--glass-blur, 16px))",
-    border: "1px solid rgba(255,255,255,0.28)",
-    boxShadow:
-      "inset 0 1px 0 rgba(255,255,255,0.4), 0 10px 30px -14px rgba(0,0,0,0.25)",
-    transform: "translateZ(0)",
-    willChange: "transform",
-  };
   const Inner = (
     <>
       <span
@@ -95,8 +94,8 @@ function ContactRow({
         href={href}
         className="pf-anf-contact-row relative grid items-center gap-4 overflow-hidden text-white"
         style={{
-          ...commonStyle,
-          gridTemplateColumns: "44px 1fr",
+          ...CONTACT_ROW_STYLE,
+          gridTemplateColumns: "44px minmax(0,1fr)",
         }}
       >
         {Inner}
@@ -107,7 +106,7 @@ function ContactRow({
     <div
       className="pf-anf-contact-row relative grid items-center gap-4 overflow-hidden text-white"
       style={{
-        ...commonStyle,
+        ...CONTACT_ROW_STYLE,
         gridTemplateColumns: "44px 1fr",
       }}
     >
@@ -124,6 +123,7 @@ function Input({
   placeholder,
   type = "text",
   required = false,
+  hint,
 }: {
   label: string;
   name: keyof FormData;
@@ -132,7 +132,9 @@ function Input({
   placeholder?: string;
   type?: string;
   required?: boolean;
+  hint?: string;
 }) {
+  const hintId = hint ? `contact-${name}-hint` : undefined;
   return (
     <label className="grid gap-1.5">
       <span
@@ -140,6 +142,11 @@ function Input({
         style={{ color: "var(--brand-heading)" }}
       >
         {label}
+        {required && (
+          <span aria-hidden="true" style={{ color: "var(--brand-primary)" }}>
+            {" *"}
+          </span>
+        )}
       </span>
       <input
         type={type}
@@ -148,6 +155,8 @@ function Input({
         onChange={onChange}
         placeholder={placeholder}
         required={required}
+        aria-required={required || undefined}
+        aria-describedby={hintId}
         className="text-[15px] outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-white"
         style={{
           padding: "14px 16px",
@@ -159,6 +168,15 @@ function Input({
           background: "var(--surface-card)",
         }}
       />
+      {hint && (
+        <span
+          id={hintId}
+          className="text-[12px]"
+          style={{ color: "var(--muted-foreground)" }}
+        >
+          {hint}
+        </span>
+      )}
     </label>
   );
 }
@@ -199,8 +217,8 @@ export default function AnfrageForm() {
       if (!res.ok || !payload?.ok) {
         const fallback =
           res.status === 400
-            ? "Bitte überprüfen Sie Ihre Eingaben."
-            : "Senden fehlgeschlagen. Bitte später erneut versuchen oder uns direkt anrufen.";
+            ? "Eingaben prüfen — E-Mail-Format und Pflichtfelder."
+            : "Senden fehlgeschlagen. Bitte erneut versuchen oder direkt anrufen.";
         setErrorMessage(payload?.error ?? fallback);
         setStatus("error");
         return;
@@ -209,7 +227,7 @@ export default function AnfrageForm() {
       setStatus("success");
     } catch {
       setErrorMessage(
-        "Verbindung zum Server fehlgeschlagen. Bitte prüfen Sie Ihre Internetverbindung."
+        "Keine Verbindung zum Server. Internetverbindung prüfen oder direkt anrufen."
       );
       setStatus("error");
     }
@@ -267,8 +285,7 @@ export default function AnfrageForm() {
                 maxWidth: "38ch",
               }}
             >
-              Kostenlos, unverbindlich und in der Regel innerhalb von 24
-              Stunden.
+              Kostenlos, unverbindlich, Antwort innerhalb von 24 Stunden.
             </p>
 
             <div className="grid gap-3.5">
@@ -335,9 +352,8 @@ export default function AnfrageForm() {
                   color: "var(--brand-text)",
                 }}
               >
-                Vielen Dank — wir melden uns innerhalb von 24 Stunden persönlich
-                bei Ihnen. Bei dringenden Anliegen erreichen Sie uns telefonisch
-                unter{" "}
+                Wir melden uns innerhalb von 24 Stunden persönlich. Bei
+                dringenden Anliegen erreichen Sie uns unter{" "}
                 <a
                   href={`tel:${brand.phone.replace(/\s/g, "")}`}
                   style={{

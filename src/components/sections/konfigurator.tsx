@@ -19,7 +19,7 @@ const steps = [
   {
     n: "03",
     title: "Profil",
-    body: "Gealan, Aluplast, Salamander — konfigurieren, bestellen, montieren.",
+    body: "Gealan, Aluplast, Salamander oder Schüco — Uf-Wert und Bautiefe im Vergleich.",
   },
 ];
 
@@ -54,14 +54,13 @@ function Field({
         {label}
       </span>
       <div
-        className="grid overflow-hidden"
+        className="glass-card grid overflow-hidden"
         style={{
+          ["--glass-blur" as string]: "10px",
           gridTemplateColumns: "auto minmax(0,1fr) auto",
           border: "1px solid rgba(255,255,255,0.7)",
           borderRadius: 12,
           background: "rgba(255,255,255,0.7)",
-          backdropFilter: "blur(10px)",
-          WebkitBackdropFilter: "blur(10px)",
           boxShadow:
             "inset 0 1px 0 rgba(255,255,255,0.9), 0 4px 12px -6px rgba(17,40,70,0.08)",
         }}
@@ -146,12 +145,8 @@ function ConfigPreview() {
           "0 18px 50px -20px rgba(17,40,70,0.25), inset 0 1px 0 rgba(255,255,255,0.8)",
         display: "grid",
         gridTemplateColumns: "minmax(0,1fr) minmax(0,1fr)",
-        transform: "translateZ(0)",
-        willChange: "transform",
       }}
     >
-      <span className="glass-edge-light" aria-hidden />
-
       {/* LEFT canvas */}
       <div
         className="relative grid place-items-center"
@@ -322,7 +317,7 @@ function ConfigPreview() {
           >
             Schritt 2 — Öffnungsart
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {openings.map((o, i) => {
               const isActive = i === opening;
               return (
@@ -330,8 +325,11 @@ function ConfigPreview() {
                   key={o.label}
                   type="button"
                   onClick={() => setOpening(i)}
-                  className="relative grid justify-items-center gap-1.5 transition-all"
+                  className={`relative grid justify-items-center gap-1.5 transition-all ${
+                    isActive ? "" : "glass-card"
+                  }`}
                   style={{
+                    ["--glass-blur" as string]: "10px",
                     padding: "12px 8px 10px",
                     minHeight: 44,
                     borderRadius: 12,
@@ -342,8 +340,6 @@ function ConfigPreview() {
                     border: `1px solid ${
                       isActive ? "var(--brand-primary)" : "rgba(255,255,255,0.8)"
                     }`,
-                    backdropFilter: isActive ? "none" : "blur(10px)",
-                    WebkitBackdropFilter: isActive ? "none" : "blur(10px)",
                     boxShadow: isActive
                       ? "0 8px 20px -8px rgba(0,159,227,0.55)"
                       : "inset 0 1px 0 rgba(255,255,255,0.8), 0 4px 14px -6px rgba(17,40,70,0.12)",
@@ -375,21 +371,19 @@ function ConfigPreview() {
 
         {/* Price readout */}
         <div
-          className="relative grid items-center gap-4 overflow-hidden text-white"
+          className="glass-card relative grid items-center gap-4 overflow-hidden text-white"
           style={{
+            ["--glass-blur" as string]: "20px",
             marginTop: 12,
             padding: 24,
             gridTemplateColumns: "1fr auto",
             borderRadius: 14,
             background: "rgba(20,25,34,0.88)",
-            backdropFilter: "saturate(180%) blur(20px)",
-            WebkitBackdropFilter: "saturate(180%) blur(20px)",
             border: "1px solid var(--glass-dark-edge)",
             boxShadow:
               "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12)",
           }}
         >
-          <span className="glass-shine" aria-hidden />
           <div className="relative">
             <div
               className="mono up mb-1 text-[10px]"
@@ -408,7 +402,7 @@ function ConfigPreview() {
               {price.toLocaleString("de-DE")} €
               <span
                 className="ml-2 text-[13px] font-normal"
-                style={{ color: "rgba(255,255,255,0.5)" }}
+                style={{ color: "var(--text-on-dark-muted)" }}
               >
                 inkl. MwSt.
               </span>
@@ -422,10 +416,10 @@ function ConfigPreview() {
               minHeight: 44,
               background: "var(--brand-primary)",
               fontFamily: "var(--font-display)",
-              boxShadow: "0 10px 24px -10px rgba(0,159,227,0.6)",
+              boxShadow: "var(--shadow-brand-cta)",
             }}
           >
-            Weiter →
+            Konfigurator starten →
           </Link>
         </div>
       </div>
@@ -525,7 +519,7 @@ export default function Konfigurator() {
             }}
           >
             Maße eintragen, Öffnungsart wählen, Profil bestimmen — Preis und
-            Lieferzeit erscheinen live. Kein Gespräch vorab nötig.
+            Lieferzeit erscheinen live.
           </p>
         </div>
 
@@ -543,12 +537,11 @@ export default function Konfigurator() {
           {steps.map((s) => (
             <div
               key={s.n}
-              className="relative grid gap-3.5 overflow-hidden"
+              className="glass-card relative grid gap-3.5 overflow-hidden"
               style={{
+                ["--glass-blur" as string]: "14px",
                 padding: "36px 32px",
                 background: "rgba(255,255,255,0.75)",
-                backdropFilter: "blur(14px)",
-                WebkitBackdropFilter: "blur(14px)",
                 boxShadow: "inset 0 1px 0 rgba(255,255,255,0.9)",
               }}
             >

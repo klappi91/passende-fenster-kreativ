@@ -109,10 +109,10 @@ export default function ProductDetail({ product }: ProductDetailProps) {
 
           <Link
             href="/anfrage"
-            className="bg-brand-gradient inline-flex items-center gap-3 rounded-xl px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-[var(--brand-primary)]/25 transition-all duration-300 hover:gap-5 hover:shadow-xl hover:shadow-[var(--brand-primary)]/35"
+            className="group bg-brand-gradient inline-flex items-center gap-3 rounded-xl px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-[var(--brand-primary)]/25 transition-shadow duration-300 hover:shadow-xl hover:shadow-[var(--brand-primary)]/35"
           >
             Jetzt anfragen
-            <ArrowRight className="h-5 w-5 transition-transform duration-300" />
+            <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
           </Link>
         </div>
       </section>

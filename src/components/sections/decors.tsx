@@ -71,25 +71,19 @@ export default function Decors() {
               >
                 <Image
                   src={d.image}
-                  alt={`${d.label} Dekor`}
+                  alt={`${d.label} — Holzdekor-Probe`}
                   fill
                   sizes="(max-width: 1100px) 33vw, 280px"
                   className="object-cover"
                 />
                 <div
-                  className="absolute flex items-center justify-between"
+                  className="glass-light absolute flex items-center justify-between"
                   style={{
                     bottom: 10,
                     left: 10,
                     right: 10,
                     padding: "8px 14px",
                     borderRadius: 10,
-                    background: "rgba(255,255,255,0.72)",
-                    backdropFilter: "saturate(160%) blur(14px)",
-                    WebkitBackdropFilter: "saturate(160%) blur(14px)",
-                    border: "1px solid rgba(255,255,255,0.8)",
-                    boxShadow:
-                      "inset 0 1px 0 rgba(255,255,255,0.9), 0 6px 18px -8px rgba(17,40,70,0.25)",
                   }}
                 >
                   <span

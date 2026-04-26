@@ -35,7 +35,10 @@ export function MobileBottomSheet({ init }: { init: InitResponse }) {
   return (
     <>
       {/* Sticky CTA Bar unten */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 flex items-center gap-3 border-t border-[var(--border)] bg-white px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] lg:hidden">
+      <div
+        className="fixed bottom-0 left-0 right-0 z-40 flex items-center gap-3 border-t border-[var(--border)] bg-white px-4 py-3 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] lg:hidden"
+        style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+      >
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -81,15 +84,24 @@ export function MobileBottomSheet({ init }: { init: InitResponse }) {
       <Drawer.Root open={open} onOpenChange={setOpen}>
         <Drawer.Portal>
           <Drawer.Overlay className="fixed inset-0 z-50 bg-black/40" />
-          <Drawer.Content className="fixed bottom-0 left-0 right-0 z-50 flex max-h-[90vh] flex-col rounded-t-3xl bg-white shadow-[0_-8px_32px_rgba(0,0,0,0.16)] outline-none">
-            <Drawer.Title className="sr-only">Konfigurations-Zusammenfassung</Drawer.Title>
-            <Drawer.Description className="sr-only">
-              Live-Preview, Preis und Zusammenfassung deiner aktuellen Konfiguration.
+          <Drawer.Content
+            aria-labelledby="mobile-bottom-sheet-title"
+            aria-describedby="mobile-bottom-sheet-description"
+            className="fixed bottom-0 left-0 right-0 z-50 flex max-h-[90vh] flex-col rounded-t-3xl bg-white shadow-[0_-8px_32px_rgba(0,0,0,0.16)] outline-none"
+          >
+            <Drawer.Title id="mobile-bottom-sheet-title" className="sr-only">
+              Konfigurations-Zusammenfassung
+            </Drawer.Title>
+            <Drawer.Description
+              id="mobile-bottom-sheet-description"
+              className="sr-only"
+            >
+              Live-Preview, Preis und Zusammenfassung Ihrer aktuellen Konfiguration.
             </Drawer.Description>
-            <div className="mx-auto mt-2 h-1 w-12 rounded-full bg-gray-300" />
+            <div className="mx-auto mt-2 h-1 w-12 rounded-full bg-border" />
             <button
               onClick={() => setOpen(false)}
-              className="absolute right-4 top-4 rounded-full p-1 text-[var(--muted-foreground)] hover:bg-[var(--konfig-chip-idle-bg)]"
+              className="absolute right-4 top-4 rounded-full p-1 text-[var(--muted-foreground)] hover:bg-[var(--konfig-chip-idle-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-2"
               aria-label="Schließen"
             >
               <X className="h-5 w-5" />

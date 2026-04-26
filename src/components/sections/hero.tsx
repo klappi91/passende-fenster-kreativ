@@ -29,7 +29,19 @@ export default function Hero() {
             // Reduced motion: render final state immediately, no entrance animation.
             return;
           }
-          const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+          const tl = gsap.timeline({
+            defaults: { ease: "power3.out" },
+            onStart: () => {
+              if (paneRef.current) {
+                paneRef.current.style.willChange = "transform, opacity";
+              }
+            },
+            onComplete: () => {
+              if (paneRef.current) {
+                paneRef.current.style.willChange = "auto";
+              }
+            },
+          });
           tl.from(paneRef.current, {
             y: 40,
             opacity: 0,
@@ -126,12 +138,8 @@ export default function Hero() {
             boxShadow:
               "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.25)",
             maxWidth: 1080,
-            transform: "translateZ(0)",
-            willChange: "transform",
           }}
         >
-          <span className="glass-edge-light" aria-hidden />
-          <span className="glass-shine" aria-hidden />
           <span className="mullion-cross" aria-hidden />
 
           {/* Corner ticks */}
@@ -194,12 +202,7 @@ export default function Hero() {
               <br />
               die{" "}
               <em
-                style={{
-                  fontFamily: "var(--font-display)",
-                  fontStyle: "italic",
-                  fontWeight: 500,
-                  color: "var(--brand-primary)",
-                }}
+                className="italic font-medium text-[var(--brand-primary)]"
               >
                 passen
               </em>{" "}
@@ -248,6 +251,8 @@ export default function Hero() {
                     fill="none"
                     stroke="currentColor"
                     strokeWidth="2.5"
+                    aria-hidden="true"
+                    focusable="false"
                   >
                     <path d="M5 12h14M13 5l7 7-7 7" />
                   </svg>

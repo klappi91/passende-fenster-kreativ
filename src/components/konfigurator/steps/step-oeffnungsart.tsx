@@ -51,7 +51,7 @@ export function StepOeffnungsart({ init }: { init: InitResponse }) {
       <p className="heading-price-label">Schritt 2 von 5</p>
       <h2 className="heading-konfig-step mt-2">Öffnungsart je Flügel</h2>
       <p className="text-caption mt-2 max-w-xl">
-        Wähle für jeden Flügel die Öffnungsrichtung. Perspektive: von innen auf das
+        Wählen Sie für jeden Flügel die Öffnungsrichtung. Perspektive: von innen auf das
         Fenster blickend. Die Dreiecks-Spitze zeigt zur Drehachse.
       </p>
 

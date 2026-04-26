@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function AnfragePage() {
   return (
-    <main className="pt-24">
+    <main id="main" className="pt-24">
       <AnfrageForm />
     </main>
   );

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 
@@ -15,6 +15,12 @@ const navItems = [
 export default function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const burgerRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+
+  const closeMenu = useCallback(() => {
+    setOpen(false);
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -31,6 +37,53 @@ export default function Header() {
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  // Focus management + Escape + Tab-trap for mobile drawer
+  useEffect(() => {
+    if (!open) return;
+
+    const menu = mobileMenuRef.current;
+    if (!menu) return;
+
+    const focusables = Array.from(
+      menu.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      )
+    );
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+
+    // Initial focus on first link in menu
+    first?.focus();
+
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setOpen(false);
+        return;
+      }
+      if (e.key !== "Tab" || focusables.length === 0) return;
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last?.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first?.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [open]);
+
+  // Restore focus to burger button on close
+  const wasOpenRef = useRef(false);
+  useEffect(() => {
+    if (wasOpenRef.current && !open) {
+      burgerRef.current?.focus();
+    }
+    wasOpenRef.current = open;
+  }, [open]);
 
   return (
     <header
@@ -55,12 +108,8 @@ export default function Header() {
           boxShadow:
             "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.25)",
           transition: "background 0.3s",
-          transform: "translateZ(0)",
-          willChange: "transform",
         }}
       >
-        <span className="glass-shine" aria-hidden />
-
         <Link href="/" className="relative flex items-center gap-3">
           <div
             className="grid h-9 w-9 place-items-center rounded-[10px] text-white"
@@ -83,7 +132,7 @@ export default function Header() {
             }}
           >
             Passende-Fenster
-            <span style={{ color: "var(--brand-primary)" }}>.de</span>
+            <span className="text-[var(--brand-primary)]">.de</span>
           </span>
         </Link>
 
@@ -105,7 +154,7 @@ export default function Header() {
             style={{
               background: "var(--brand-primary)",
               fontFamily: "var(--font-display)",
-              boxShadow: "0 10px 24px -10px rgba(0,159,227,0.6)",
+              boxShadow: "var(--shadow-brand-cta)",
             }}
           >
             Jetzt konfigurieren →
@@ -114,11 +163,13 @@ export default function Header() {
 
         {/* Mobile burger */}
         <button
+          ref={burgerRef}
           type="button"
-          aria-label="Navigation öffnen"
+          aria-label={open ? "Navigation schließen" : "Navigation öffnen"}
           aria-expanded={open}
+          aria-controls="pf-mobile-menu"
           onClick={() => setOpen(!open)}
-          className="pf-nav-mobile grid place-items-center"
+          className="pf-nav-mobile grid place-items-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-dark)]"
           style={{
             width: 44,
             height: 44,
@@ -137,6 +188,11 @@ export default function Header() {
       {/* Mobile menu */}
       {open && (
         <div
+          ref={mobileMenuRef}
+          id="pf-mobile-menu"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation"
           className="pf-header-mobile-menu relative mt-3 grid gap-1 overflow-hidden p-5"
           style={{
             background: "rgba(20,25,34,0.55)",
@@ -150,13 +206,12 @@ export default function Header() {
               "0 18px 50px -18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.25)",
           }}
         >
-          <span className="glass-shine" aria-hidden />
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              onClick={() => setOpen(false)}
-              className="relative min-h-[44px] rounded-xl px-4 py-3.5 text-[15px] font-medium text-white/90"
+              onClick={closeMenu}
+              className="relative min-h-[44px] rounded-xl px-4 py-3.5 text-[15px] font-medium text-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-dark)]"
               style={{
                 border: "1px solid rgba(255,255,255,0.06)",
                 background: "rgba(255,255,255,0.04)",
@@ -167,12 +222,12 @@ export default function Header() {
           ))}
           <Link
             href="/konfigurator"
-            onClick={() => setOpen(false)}
-            className="relative mt-2 min-h-[44px] rounded-xl px-4 py-3.5 text-center text-[15px] font-semibold text-white"
+            onClick={closeMenu}
+            className="relative mt-2 min-h-[44px] rounded-xl px-4 py-3.5 text-center text-[15px] font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--brand-dark)]"
             style={{
               background: "var(--brand-primary)",
               fontFamily: "var(--font-display)",
-              boxShadow: "0 10px 24px -10px rgba(0,159,227,0.6)",
+              boxShadow: "var(--shadow-brand-cta)",
             }}
           >
             Jetzt konfigurieren →

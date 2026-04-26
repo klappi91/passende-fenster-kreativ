@@ -117,14 +117,18 @@ export function StepAnfrage({ init }: { init: InitResponse }) {
   if (inquiry.isSuccess) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-16 sm:px-8">
-        <div className="rounded-3xl bg-white p-10 text-center shadow-xl">
+        <div
+          role="status"
+          aria-live="polite"
+          className="rounded-3xl bg-white p-10 text-center shadow-xl"
+        >
           <div className="bg-brand-gradient mx-auto flex h-16 w-16 items-center justify-center rounded-full text-white shadow-lg">
             <Check className="h-8 w-8" strokeWidth={3} />
           </div>
           <h2 className="heading-konfig-step mt-6">Anfrage eingegangen</h2>
           <p className="text-caption mt-3">
-            Vielen Dank. Wir melden uns innerhalb von 48 Stunden mit einem
-            unverbindlichen Angebot.
+            Wir melden uns innerhalb von 48 Stunden mit einem unverbindlichen
+            Angebot.
           </p>
           <p className="mt-2 text-xs text-[var(--muted-foreground)]">
             Referenz-Nr. {inquiry.data.id}
@@ -191,7 +195,7 @@ export function StepAnfrage({ init }: { init: InitResponse }) {
         <div className="mt-4 flex gap-2 rounded-xl border border-[var(--destructive)]/30 bg-white p-4 text-sm text-[var(--destructive)]">
           <AlertCircle className="h-5 w-5 shrink-0" />
           <p>
-            Deine Maße liegen außerhalb des Standard-Rasters. Wir behandeln deine
+            Ihre Maße liegen außerhalb des Standard-Rasters. Wir behandeln Ihre
             Anfrage als Sonderanfrage und erstellen manuell ein Angebot.
           </p>
         </div>
@@ -236,9 +240,15 @@ export function StepAnfrage({ init }: { init: InitResponse }) {
         />
 
         {inquiry.isError && (
-          <div className="rounded-xl border border-[var(--destructive)]/30 bg-white p-4 text-sm text-[var(--destructive)]">
+          <div
+            role="alert"
+            aria-live="assertive"
+            className="rounded-xl border border-[var(--destructive)]/30 bg-white p-4 text-sm text-[var(--destructive)]"
+          >
             Anfrage konnte nicht gesendet werden:{" "}
-            {inquiry.error instanceof Error ? inquiry.error.message : "Unbekannt"}
+            {inquiry.error instanceof Error
+              ? inquiry.error.message
+              : "Verbindung prüfen oder direkt anrufen."}
           </div>
         )}
 
@@ -255,7 +265,7 @@ export function StepAnfrage({ init }: { init: InitResponse }) {
             disabled={!canSubmit || inquiry.isPending}
             className="bg-brand-gradient konfig-animate inline-flex items-center rounded-full px-8 py-3 text-sm font-semibold text-white shadow-md transition hover:scale-105 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100"
           >
-            {inquiry.isPending ? "Sende …" : "Anfrage senden"}
+            {inquiry.isPending ? "Wird gesendet …" : "Anfrage senden"}
           </button>
         </div>
 
@@ -288,10 +298,19 @@ function TextField({
   autoComplete?: string;
   helper?: string;
 }) {
+  const errorId = error ? `contact-${name}-error` : undefined;
+  const hintId = helper && !error ? `contact-${name}-hint` : undefined;
+  const describedBy =
+    [errorId, hintId].filter(Boolean).join(" ") || undefined;
   return (
     <label className="block">
       <span className="mb-1 block text-sm font-medium text-[var(--brand-heading)]">
-        {label} {required && <span className="text-[var(--destructive)]">*</span>}
+        {label}{" "}
+        {required && (
+          <span aria-hidden="true" className="text-[var(--destructive)]">
+            *
+          </span>
+        )}
       </span>
       <input
         type={type}
@@ -300,18 +319,21 @@ function TextField({
         onChange={(e) => onChange(e.target.value)}
         autoComplete={autoComplete}
         required={required}
+        aria-required={required || undefined}
         aria-invalid={Boolean(error)}
-        className={`w-full rounded-xl border-2 bg-white px-4 py-3 text-sm outline-none transition focus:border-[var(--konfig-stroke)] ${
+        aria-describedby={describedBy}
+        className={`w-full rounded-xl border-2 bg-white px-4 py-3 text-sm outline-none transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-1 focus:border-[var(--konfig-stroke)] ${
           error ? "border-[var(--destructive)]" : "border-[var(--border)]"
         }`}
       />
-      {(error || helper) && (
-        <p
-          className={`mt-1 text-xs ${
-            error ? "text-[var(--destructive)]" : "text-[var(--muted-foreground)]"
-          }`}
-        >
-          {error ?? helper}
+      {error && (
+        <p id={errorId} className="mt-1 text-xs text-[var(--destructive)]">
+          {error}
+        </p>
+      )}
+      {!error && helper && (
+        <p id={hintId} className="mt-1 text-xs text-[var(--muted-foreground)]">
+          {helper}
         </p>
       )}
     </label>
@@ -331,6 +353,7 @@ function TextareaField({
   onChange: (v: string) => void;
   helper?: string;
 }) {
+  const hintId = helper ? `contact-${name}-hint` : undefined;
   return (
     <label className="block">
       <span className="mb-1 block text-sm font-medium text-[var(--brand-heading)]">
@@ -341,10 +364,13 @@ function TextareaField({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={4}
-        className="w-full rounded-xl border-2 border-[var(--border)] bg-white px-4 py-3 text-sm outline-none transition focus:border-[var(--konfig-stroke)]"
+        aria-describedby={hintId}
+        className="w-full rounded-xl border-2 border-[var(--border)] bg-white px-4 py-3 text-sm outline-none transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--brand-primary)] focus-visible:ring-offset-1 focus:border-[var(--konfig-stroke)]"
       />
       {helper && (
-        <p className="mt-1 text-xs text-[var(--muted-foreground)]">{helper}</p>
+        <p id={hintId} className="mt-1 text-xs text-[var(--muted-foreground)]">
+          {helper}
+        </p>
       )}
     </label>
   );

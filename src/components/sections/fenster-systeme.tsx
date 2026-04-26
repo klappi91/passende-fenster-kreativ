@@ -92,7 +92,7 @@ function Spec({
         {unit && (
           <span
             className="ml-1.5 text-[11px] font-normal"
-            style={{ color: "rgba(255,255,255,0.5)" }}
+            style={{ color: "var(--text-on-dark-muted)" }}
           >
             {unit}
           </span>
@@ -162,7 +162,7 @@ export default function FensterSysteme() {
             }}
           >
             Jede Marke mit eigener Stärke — Dämmwert, Schallschutz, Ästhetik.
-            Wir beraten, welches Profil zu Ihrem Bauvorhaben wirklich passt.
+            Wir beraten, welches Profil zu Ihrem Bauvorhaben passt.
           </p>
         </div>
 
@@ -178,62 +178,39 @@ export default function FensterSysteme() {
                 <button
                   key={s.name}
                   onClick={() => setActive(i)}
-                  className="text-left transition-all duration-200"
-                  style={{
-                    padding: "22px 26px",
-                    minHeight: 44,
-                    background: isActive
-                      ? "rgba(0,159,227,0.08)"
-                      : "transparent",
-                    borderLeft: `3px solid ${
-                      isActive
-                        ? "var(--brand-primary)"
-                        : "rgba(255,255,255,0.08)"
-                    }`,
-                    display: "grid",
-                    gridTemplateColumns: "auto 1fr auto",
-                    gap: 16,
-                    alignItems: "center",
-                  }}
+                  data-state={isActive ? "active" : "inactive"}
+                  className="grid grid-cols-[auto_1fr_auto] items-center gap-4 px-[26px] py-[22px] text-left transition-all duration-200 border-l-[3px] border-white/10 bg-transparent data-[state=active]:border-[var(--brand-primary)] data-[state=active]:bg-[rgba(0,159,227,0.08)] min-h-[44px]"
                 >
                   <span
-                    className="mono text-xs"
-                    style={{
-                      color: isActive
-                        ? "var(--brand-primary)"
-                        : "rgba(255,255,255,0.4)",
-                    }}
+                    data-state={isActive ? "active" : "inactive"}
+                    className="mono text-xs text-white/40 data-[state=active]:text-[var(--brand-primary)]"
                   >
                     0{i + 1}
                   </span>
                   <div>
                     <div
                       className="mono up mb-0.5 text-[10px]"
-                      style={{ color: "rgba(255,255,255,0.5)" }}
+                      style={{ color: "var(--text-on-dark-muted)" }}
                     >
                       {s.brand}
                     </div>
                     <div
+                      data-state={isActive ? "active" : "inactive"}
+                      className="text-white/70 data-[state=active]:text-white"
                       style={{
                         fontFamily: "var(--font-display)",
                         fontWeight: 600,
                         fontSize: "clamp(18px, 2vw, 26px)",
                         letterSpacing: "-0.015em",
-                        color: isActive ? "#fff" : "rgba(255,255,255,0.7)",
                       }}
                     >
                       {s.name}
                     </div>
                   </div>
                   <span
-                    className="rounded-full text-[11px]"
+                    data-state={isActive ? "active" : "inactive"}
+                    className="rounded-full px-2.5 py-1 text-[11px] font-semibold bg-white/[0.08] text-white/50 data-[state=active]:bg-[var(--brand-primary)] data-[state=active]:text-white"
                     style={{
-                      padding: "4px 10px",
-                      background: isActive
-                        ? "var(--brand-primary)"
-                        : "rgba(255,255,255,0.08)",
-                      color: isActive ? "#fff" : "rgba(255,255,255,0.5)",
-                      fontWeight: 600,
                       fontFamily: "var(--font-display)",
                     }}
                   >
@@ -261,9 +238,6 @@ export default function FensterSysteme() {
               gridTemplateRows: "auto 1fr auto auto",
             }}
           >
-            <span className="glass-edge-light" aria-hidden />
-            <span className="glass-shine" aria-hidden />
-
             <div className="relative flex items-start justify-between gap-4">
               <div>
                 <div
@@ -323,7 +297,7 @@ export default function FensterSysteme() {
                 alt={sys.name}
                 width={520}
                 height={420}
-                sizes="(max-width: 1100px) 90vw, 500px"
+                sizes="(max-width: 640px) 65vw, (max-width: 1100px) 50vw, 520px"
                 className="relative h-auto w-auto max-h-[82%] max-w-[72%] object-contain"
                 style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.45))" }}
               />

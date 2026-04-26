@@ -192,7 +192,7 @@ export default function Dienstleistungen() {
                 </span>
                 <span
                   className="mono ml-1.5 text-[11px]"
-                  style={{ color: "rgba(255,255,255,0.5)" }}
+                  style={{ color: "var(--text-on-dark-muted)" }}
                 >
                   {s.unit}
                 </span>

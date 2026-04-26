@@ -58,7 +58,7 @@ export function KonfiguratorShell() {
   };
 
   return (
-    <div className="relative bg-[var(--konfig-canvas)] pt-20">
+    <div className="relative bg-[var(--konfig-canvas)] pt-12 sm:pt-20">
       <ProgressBar />
 
       <div className="mx-auto flex max-w-7xl">
@@ -68,11 +68,11 @@ export function KonfiguratorShell() {
         <main className="flex min-h-[calc(100vh-20rem)] flex-1 flex-col">
           {init.isLoading ? (
             <div className="mx-auto w-full max-w-3xl px-6 py-16">
-              <div className="h-8 w-48 animate-pulse rounded bg-gray-200" />
-              <div className="mt-4 h-4 w-96 animate-pulse rounded bg-gray-200" />
+              <div className="h-8 w-48 animate-pulse rounded bg-muted" />
+              <div className="mt-4 h-4 w-96 animate-pulse rounded bg-muted" />
               <div className="mt-8 grid grid-cols-2 gap-6">
-                <div className="h-20 animate-pulse rounded bg-gray-200" />
-                <div className="h-20 animate-pulse rounded bg-gray-200" />
+                <div className="h-20 animate-pulse rounded bg-muted" />
+                <div className="h-20 animate-pulse rounded bg-muted" />
               </div>
             </div>
           ) : (

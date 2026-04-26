@@ -54,7 +54,7 @@ export default async function KatalogSlugPage({ params }: PageProps) {
         : `${node.products.length} Produkte`;
 
     return (
-      <>
+      <main id="main">
         <ScrollAnimations />
         <CategoryHero
           title={node.label}
@@ -65,7 +65,7 @@ export default async function KatalogSlugPage({ params }: PageProps) {
         <section className="mx-auto max-w-7xl px-6 py-12 sm:px-8 sm:py-16 lg:px-12">
           <CategoryView node={node} />
         </section>
-      </>
+      </main>
     );
   }
 
@@ -74,7 +74,7 @@ export default async function KatalogSlugPage({ params }: PageProps) {
   const breadcrumbSegments = [...product.category_path, product.slug];
 
   return (
-    <>
+    <main id="main">
       <ScrollAnimations />
       <CategoryHero
         title={product.name}
@@ -82,6 +82,6 @@ export default async function KatalogSlugPage({ params }: PageProps) {
         segments={breadcrumbSegments}
       />
       <ProductDetail product={product} />
-    </>
+    </main>
   );
 }

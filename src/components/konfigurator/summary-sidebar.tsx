@@ -52,7 +52,7 @@ export function SummarySidebar({ init }: { init: InitResponse }) {
         </p>
         <p className="heading-price mt-1 konfig-animate">
           {price.isLoading ? (
-            <span className="inline-block h-[0.9em] w-28 animate-pulse rounded bg-gray-200" />
+            <span className="inline-block h-[0.9em] w-28 animate-pulse rounded bg-muted" />
           ) : priceEur !== null ? (
             <>
               {Math.round(priceEur)}

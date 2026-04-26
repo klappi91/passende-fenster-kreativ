@@ -42,9 +42,9 @@ export function StepKonfiguration({ init: _init }: { init: InitResponse }) {
   if (article.isLoading) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-10">
-        <div className="h-6 w-32 animate-pulse rounded bg-gray-200" />
-        <div className="mt-4 h-10 w-96 animate-pulse rounded bg-gray-200" />
-        <div className="mt-6 h-48 animate-pulse rounded-2xl bg-gray-200" />
+        <div className="h-6 w-32 animate-pulse rounded bg-muted" />
+        <div className="mt-4 h-10 w-96 animate-pulse rounded bg-muted" />
+        <div className="mt-6 h-48 animate-pulse rounded-2xl bg-muted" />
       </div>
     );
   }
@@ -257,7 +257,7 @@ function AdditionsAccordion({
       <h3 className="heading-sub" style={{ fontFamily: "var(--font-display)" }}>
         Zubehör & Extras
       </h3>
-      <p className="text-caption mt-1">Optional — erweitern dein Fenster nach Bedarf.</p>
+      <p className="text-caption mt-1">Optional — Rollladen, Schallschutz, Sichtschutz.</p>
 
       <Accordion multiple className="mt-4 space-y-2">
         {categories.map(({ category, options }) => {

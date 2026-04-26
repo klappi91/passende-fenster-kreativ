@@ -15,7 +15,7 @@ export function GuideDrawer({ children }: { children: React.ReactNode }) {
       <Drawer.Trigger asChild>{children}</Drawer.Trigger>
       <Drawer.Portal>
         <Drawer.Overlay className="fixed inset-0 z-50 bg-black/40" />
-        <Drawer.Content className="fixed right-0 top-0 z-50 flex h-full w-full max-w-[560px] flex-col rounded-l-3xl bg-white shadow-[0_0_48px_rgba(0,0,0,0.2)] outline-none">
+        <Drawer.Content className="fixed right-0 top-0 z-50 flex h-full w-full max-w-[min(560px,90vw)] flex-col rounded-l-3xl bg-white shadow-[0_0_48px_rgba(0,0,0,0.2)] outline-none">
           <Drawer.Title className="sr-only">Fenster ausmessen — Mess-Guide</Drawer.Title>
           <Drawer.Description className="sr-only">
             Interaktiver Mini-Rechner und Schritt-für-Schritt-Anleitung zum Ausmessen von Fenstern.
@@ -41,7 +41,7 @@ export function GuideDrawer({ children }: { children: React.ReactNode }) {
           <div className="overflow-y-auto p-6">
             <MiniRechner onApply={() => setOpen(false)} />
             <p className="text-caption mt-8 border-t border-[var(--border)] pt-6">
-              Vollständige Schritt-für-Schritt-Anleitung findest du unter{" "}
+              Vollständige Schritt-für-Schritt-Anleitung finden Sie unter{" "}
               <a
                 href="/fenster-ausmessen"
                 className="font-medium text-[var(--brand-primary)] underline"

@@ -21,9 +21,9 @@ export const metadata: Metadata = {
 
 export default function KonfiguratorPage() {
   return (
-    <>
+    <main id="main">
       <KonfiguratorShell />
       <MobileBottomSheetWrapper />
-    </>
+    </main>
   );
 }

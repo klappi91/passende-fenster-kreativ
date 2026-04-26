@@ -3,23 +3,23 @@
 const usps = [
   {
     kbd: "01",
-    title: "Große Auswahl",
+    title: "Fünf Premium-Marken",
     body: "Profile von Schüco, Gealan, Aluplast, Deceuninck und Salamander.",
   },
   {
     kbd: "02",
     title: "Konfigurator",
-    body: "Maßgeschneidert — jedes Maß, jede Öffnungsart, in drei Schritten.",
+    body: "Jedes Maß, jede Öffnungsart, in drei Schritten.",
   },
   {
     kbd: "03",
     title: "Versandkostenfrei",
-    body: "Ab 1.000 € in ganz Deutschland — ohne Aufpreis.",
+    body: "Ab 1.000 € Bestellwert, deutschlandweit.",
   },
   {
     kbd: "04",
     title: "Montage-Service",
-    body: "Profi-Montage für Fenster, Türen und Rollläden aus einer Hand.",
+    body: "Fenster, Türen und Rollläden aus einer Hand — keine Subunternehmer.",
   },
 ];
 
@@ -38,8 +38,7 @@ export default function Usp() {
     >
       <div className="relative mx-auto max-w-[1440px]">
         <div
-          className="pf-usp-head mb-[72px] grid items-end gap-[clamp(32px,5vw,80px)]"
-          style={{ gridTemplateColumns: "minmax(0,1fr) minmax(0,1.2fr)" }}
+          className="pf-usp-head mb-[72px] grid grid-cols-1 items-end gap-[clamp(32px,5vw,80px)] lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]"
         >
           <div>
             <div
@@ -75,9 +74,9 @@ export default function Usp() {
               maxWidth: "48ch",
             }}
           >
-            Wir führen fünf Premium-Marken, konfigurieren jedes Maß online und
-            montieren im Umkreis von 200 km um Hannover selbst. Alles aus einer
-            Hand — ohne Subunternehmer, ohne Überraschungen.
+            Fünf Premium-Marken, jedes Maß online konfiguriert, Montage im
+            Umkreis von 200 km um Hannover. Alles aus einer Hand — keine
+            Subunternehmer.
           </p>
         </div>
 
@@ -125,7 +124,7 @@ export default function Usp() {
               />
               <span
                 className="mono up text-[10px]"
-                style={{ color: "rgba(255,255,255,0.5)" }}
+                style={{ color: "var(--text-on-dark-muted)" }}
               >
                 Marken
               </span>
@@ -204,66 +203,54 @@ export default function Usp() {
               return (
                 <div
                   key={u.title}
-                  className="relative overflow-hidden"
+                  data-inverted={t.inverted ? "true" : "false"}
+                  className="relative grid grid-cols-[1fr_auto] items-center gap-5 overflow-hidden rounded-[20px] px-7 py-6 text-[var(--brand-text)] data-[inverted=true]:text-white"
                   style={{
                     background: t.bg,
-                    color: t.inverted ? "#fff" : "var(--brand-text)",
-                    borderRadius: 20,
-                    padding: "24px 28px",
                     border: t.border ? "1px solid var(--brand-border)" : "none",
-                    display: "grid",
-                    gridTemplateColumns: "1fr auto",
-                    alignItems: "center",
-                    gap: 20,
                   }}
                 >
                   <div className="grid gap-1.5">
                     <div className="flex items-center gap-2.5">
                       <span
-                        className="mono text-[11px] font-semibold"
+                        data-inverted={t.inverted ? "true" : "false"}
+                        className="mono text-[11px] font-semibold data-[inverted=true]:text-white/85"
                         style={{
-                          color: t.inverted
-                            ? "rgba(255,255,255,0.85)"
-                            : t.accent,
+                          color: t.inverted ? undefined : t.accent,
                         }}
                       >
                         {u.kbd}
                       </span>
                       <h3
-                        className="m-0 text-[20px]"
+                        data-inverted={t.inverted ? "true" : "false"}
+                        className="m-0 text-[20px] text-[var(--brand-heading)] data-[inverted=true]:text-white"
                         style={{
                           fontFamily: "var(--font-display)",
                           fontWeight: 700,
                           letterSpacing: "-0.015em",
-                          color: t.inverted ? "#fff" : "var(--brand-heading)",
                         }}
                       >
                         {u.title}
                       </h3>
                     </div>
                     <p
-                      className="m-0 text-[14px]"
-                      style={{
-                        lineHeight: 1.55,
-                        color: t.inverted
-                          ? "rgba(255,255,255,0.85)"
-                          : "var(--brand-text)",
-                      }}
+                      data-inverted={t.inverted ? "true" : "false"}
+                      className="m-0 text-[14px] text-[var(--brand-text)] data-[inverted=true]:text-white/85"
+                      style={{ lineHeight: 1.55 }}
                     >
                       {u.body}
                     </p>
                   </div>
                   <div
                     aria-hidden
+                    data-inverted={t.inverted ? "true" : "false"}
+                    className="text-[rgba(33,41,52,0.06)] data-[inverted=true]:text-white/[0.18]"
                     style={{
                       fontFamily: "var(--font-display)",
                       fontWeight: 800,
                       fontSize: "clamp(44px, 5vw, 68px)",
                       lineHeight: 0.9,
                       letterSpacing: "-0.04em",
-                      color: t.inverted
-                        ? "rgba(255,255,255,0.18)"
-                        : "rgba(33,41,52,0.06)",
                     }}
                   >
                     {u.kbd}

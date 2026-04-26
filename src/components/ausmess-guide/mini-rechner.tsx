@@ -176,7 +176,7 @@ export function MiniRechner({ onApply, framed = true }: Props) {
         Rohbaumaß → Bestellmaß
       </h2>
       <p className="text-caption mt-2 max-w-md">
-        Gib deine Maueröffnungs-Maße ein. Wir berechnen das Bestellmaß sofort —
+        Geben Sie Ihre Maueröffnungs-Maße ein. Wir berechnen das Bestellmaß sofort —
         transparent und mit allen Abzügen.
       </p>
       <div className="mt-6">{content}</div>

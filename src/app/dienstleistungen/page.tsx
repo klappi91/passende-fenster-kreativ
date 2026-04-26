@@ -135,7 +135,7 @@ const services = [
 
 export default function DienstleistungenPage() {
   return (
-    <main className="pt-28 pb-20">
+    <main id="main" className="pt-28 pb-20">
       {/* Hero area */}
       <section className="bg-[var(--brand-darker)] text-white py-16 mb-16">
         <div className="mx-auto max-w-6xl px-6">

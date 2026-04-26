@@ -54,7 +54,7 @@ export function ProgressBar() {
                 type="button"
                 disabled={!clickable}
                 onClick={() => clickable && setStep(s.id)}
-                className={`group relative flex shrink-0 items-center gap-2 rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--konfig-stroke)] focus-visible:ring-offset-2 ${
+                className={`group relative inline-flex min-h-11 min-w-11 shrink-0 items-center justify-center gap-2 rounded-full transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--konfig-stroke)] focus-visible:ring-offset-2 ${
                   clickable ? "cursor-pointer" : active ? "cursor-default" : "cursor-not-allowed"
                 }`}
                 aria-label={`Schritt ${s.id}: ${s.label}${done ? " (erledigt)" : ""}`}

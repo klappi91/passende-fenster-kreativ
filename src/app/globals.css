@@ -2,27 +2,12 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark (&:is(.dark *));
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-mono);
   --font-display: var(--font-display);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -67,20 +52,7 @@
   --border: #e2e2e2;
   --input: #e2e2e2;
   --ring: #009fe3;
-  --chart-1: #009fe3;
-  --chart-2: #3d66ae;
-  --chart-3: #15779b;
-  --chart-4: #212934;
-  --chart-5: #4a4e57;
   --radius: 0.5rem;
-  --sidebar: #f9f9fb;
-  --sidebar-foreground: #3f3f3f;
-  --sidebar-primary: #009fe3;
-  --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f2f3f5;
-  --sidebar-accent-foreground: #3f3f3f;
-  --sidebar-border: #e2e2e2;
-  --sidebar-ring: #009fe3;
 
   /* Brand tokens */
   --brand-primary: #009fe3;
@@ -119,6 +91,12 @@
 
   /* Glass-dark canonical edge — used across hero pane, header, detail cards */
   --glass-dark-edge: rgba(255, 255, 255, 0.14);
+
+  /* Brand-CTA glow — used by primary cyan buttons across header, hero, konfigurator (3+ uses) */
+  --shadow-brand-cta: 0 10px 24px -10px rgba(0, 159, 227, 0.6);
+
+  /* Muted text on dark/glass surfaces — used for caption/meta on dark surfaces (5+ uses) */
+  --text-on-dark-muted: rgba(255, 255, 255, 0.5);
 }
 
 @layer base {
@@ -149,15 +127,6 @@
   .bg-dark-section {
     background-color: var(--brand-darker);
     color: #ffffff;
-  }
-  .clip-diagonal {
-    clip-path: polygon(0 0, 100% 0, 100% 85%, 0 100%);
-  }
-  .clip-diagonal-reverse {
-    clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 100%);
-  }
-  .clip-wave {
-    clip-path: polygon(0 0, 100% 0, 100% 90%, 75% 95%, 50% 90%, 25% 95%, 0 90%);
   }
 }
 
@@ -242,6 +211,20 @@
   }
 }
 
+/* Globaler Reduced-Motion-Guard (WCAG 2.3.3 / SC 2.3.3) — neutralisiert
+   Animationen, Transitions und smooth-scroll, ohne den .konfig-animate-Block
+   oben zu ersetzen. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Kreativ design — editorial/glass helpers */
 .mono {
   font-family: var(--font-mono);
@@ -274,32 +257,16 @@
     inset 0 -1px 0 rgba(33, 41, 52, 0.04);
 }
 
-/* Reusable shine overlay — absolute child inside a relative glass container. */
-.glass-shine {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background: linear-gradient(
-    115deg,
-    rgba(255, 255, 255, 0.18) 0%,
-    rgba(255, 255, 255, 0) 28%,
-    rgba(255, 255, 255, 0) 72%,
-    rgba(255, 255, 255, 0.07) 100%
-  );
-  mix-blend-mode: screen;
-}
-.glass-edge-light {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    radial-gradient(120% 80% at 0% 0%, rgba(255, 255, 255, 0.35), transparent 55%),
-    radial-gradient(120% 80% at 100% 100%, rgba(0, 159, 227, 0.14), transparent 60%);
+/* Lightweight glass card — only sets backdrop-filter, consumes --glass-blur.
+   Use when the surface needs custom background/border/shadow (e.g. form inputs)
+   but should still participate in the mobile-tier blur reduction. */
+.glass-card {
+  backdrop-filter: blur(var(--glass-blur, 10px));
+  -webkit-backdrop-filter: blur(var(--glass-blur, 10px));
 }
 
-/* Mullion cross (fake windowpane divider) — absolute child */
+/* Mullion cross (fake windowpane divider) — absolute child.
+   Opacity ist via `--mullion-opacity` pro Surface ueberschreibbar (Default 0.5). */
 .mullion-cross {
   position: absolute;
   inset: 0;
@@ -308,7 +275,7 @@
   background:
     linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)) center / 1px 100% no-repeat,
     linear-gradient(rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.06)) center / 100% 1px no-repeat;
-  opacity: 0.5;
+  opacity: var(--mullion-opacity, 0.5);
 }
 
 /* Editorial headline — matches design spec */
@@ -345,13 +312,14 @@
     -webkit-backdrop-filter: saturate(140%) blur(10px);
   }
 
-  /* Inline-styled glass surfaces consume `--glass-blur` from CSS var.
-     Override the variable on mobile to lower GPU cost while keeping
-     the glass aesthetic intact. */
+  /* Inline-styled glass surfaces and `.glass-card` consume `--glass-blur`
+     from CSS var. Override the variable on mobile to lower GPU cost while
+     keeping the glass aesthetic intact. */
   .pf-hero-pane,
   .pf-header-glass,
   .pf-konf-preview,
-  .pf-anf-contact-row {
-    --glass-blur: 12px;
+  .pf-anf-contact-row,
+  .glass-card {
+    --glass-blur: 8px;
   }
 }

@@ -38,8 +38,8 @@ export function StepMasse({ init }: { init: InitResponse }) {
       <p className="heading-price-label">Schritt 1 von 5</p>
       <h2 className="heading-konfig-step mt-2">Maße & Aufteilung</h2>
       <p className="text-caption mt-2 max-w-xl">
-        Gib die Außenmaße des geplanten Fensters ein (Bestellmaß) und wähle die
-        Aufteilung. Unsicher beim Ausmessen? Nutze den Mess-Guide.
+        Geben Sie die Außenmaße des geplanten Fensters ein (Bestellmaß) und wählen
+        Sie die Aufteilung. Unsicher beim Ausmessen? Nutzen Sie den Mess-Guide.
       </p>
 
       {/* Maß-Eingabe */}
@@ -98,7 +98,7 @@ export function StepMasse({ init }: { init: InitResponse }) {
           Aufteilung wählen
         </h3>
         <p className="text-caption mt-2">
-          Wie soll dein Fenster aufgeteilt sein?
+          Wie soll Ihr Fenster aufgeteilt sein?
         </p>
 
         <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
@@ -117,7 +117,7 @@ export function StepMasse({ init }: { init: InitResponse }) {
       <div className="mt-12 flex items-center justify-between gap-3">
         <span className="text-caption">
           {!sizeOk && "Bitte gültige Maße eingeben."}
-          {sizeOk && !groupExternalId && "Wähle eine Aufteilung."}
+          {sizeOk && !groupExternalId && "Bitte Aufteilung wählen."}
         </span>
         <button
           type="button"

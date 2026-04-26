@@ -66,7 +66,7 @@ export function StepProfil({ init }: { init: InitResponse }) {
         {articles.data && <span className="text-[var(--muted-foreground)]"> ({articles.data.count})</span>}
       </h2>
       <p className="text-caption mt-2 max-w-xl">
-        Alle Profile, die zu deinen Maßen ({width} × {height} mm,{" "}
+        Alle Profile, die zu Ihren Maßen ({width} × {height} mm,{" "}
         {articles.data?.group.name}) passen — sortiert nach{" "}
         {sort === "uw-asc" ? "Wärmedämmung" : "Preis"}.
       </p>
@@ -107,7 +107,7 @@ export function StepProfil({ init }: { init: InitResponse }) {
         {articles.isLoading && (
           <>
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-28 animate-pulse rounded-2xl bg-gray-200" />
+              <div key={i} className="h-28 animate-pulse rounded-2xl bg-muted" />
             ))}
           </>
         )}
@@ -116,10 +116,10 @@ export function StepProfil({ init }: { init: InitResponse }) {
           <div className="rounded-2xl border-2 border-[var(--destructive)]/30 bg-white p-6">
             <AlertCircle className="mb-2 h-5 w-5 text-[var(--destructive)]" />
             <p className="text-sm text-[var(--destructive)]">
-              Konnte Profile nicht laden:{" "}
+              Profile konnten nicht geladen werden:{" "}
               {articles.error instanceof Error
                 ? articles.error.message
-                : "Unbekannt"}
+                : "Verbindung prüfen"}
             </p>
             <button
               onClick={() => articles.refetch()}
@@ -133,8 +133,8 @@ export function StepProfil({ init }: { init: InitResponse }) {
         {!articles.isLoading && sortedResults.length === 0 && (
           <div className="rounded-2xl border border-[var(--border)] bg-white p-8 text-center">
             <p className="text-caption">
-              Für diese Kombination haben wir aktuell kein Standard-Profil.
-              Sprich uns gerne direkt an — wir erstellen ein individuelles Angebot.
+              Kein Standard-Profil für diese Kombination. Sonderanfrage stellen
+              — wir erstellen ein individuelles Angebot.
             </p>
             <button
               onClick={() => setStep(5)}
@@ -159,7 +159,7 @@ export function StepProfil({ init }: { init: InitResponse }) {
         {!articles.isLoading && sortedResults.length > 0 && (
           <div className="mt-8 rounded-xl bg-[var(--konfig-chip-idle-bg)] p-4">
             <p className="text-caption">
-              Nicht das Richtige dabei? Wir bieten auch{" "}
+              Nicht das Richtige dabei?{" "}
               <button
                 type="button"
                 onClick={() => {
@@ -181,7 +181,7 @@ export function StepProfil({ init }: { init: InitResponse }) {
               >
                 Holz-Fenster
               </button>{" "}
-              auf Anfrage an.
+              auf Anfrage.
             </p>
           </div>
         )}

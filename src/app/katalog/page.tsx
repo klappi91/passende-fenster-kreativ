@@ -20,7 +20,7 @@ export default function KatalogPage() {
   const categories = getMainCategories();
 
   return (
-    <>
+    <main id="main">
       <ScrollAnimations />
 
       {/* Hero */}
@@ -54,6 +54,6 @@ export default function KatalogPage() {
           descriptions={CATEGORY_DESCRIPTIONS}
         />
       </section>
-    </>
+    </main>
   );
 }

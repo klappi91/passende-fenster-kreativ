@@ -9,7 +9,7 @@ import ScrollAnimations from "@/components/scroll-animations";
 
 export default function Home() {
   return (
-    <>
+    <main id="main">
       <ScrollAnimations />
       <Hero />
       <Usp />
@@ -18,6 +18,6 @@ export default function Home() {
       <Dienstleistungen />
       <Decors />
       <AnfrageForm />
-    </>
+    </main>
   );
 }

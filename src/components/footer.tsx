@@ -29,13 +29,13 @@ export default function Footer() {
             Passende-Fenster.de
           </h2>
           <p className="mt-2 max-w-md text-sm text-white/60">
-            Fenster und Türen für jeden Geschmack — Beratung, Konfiguration und
-            Montage aus einer Hand.
+            Fenster und Türen — Beratung, Konfiguration und Montage aus einer
+            Hand.
           </p>
         </div>
 
-        {/* 3 Column Grid */}
-        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-3">
+        {/* 3 Column Grid — Kontakt-Spalte breiter für visuelle Hierarchie */}
+        <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-[1.5fr_repeat(2,1fr)]">
           {/* Column 1: Company Info */}
           <div>
             <h3 className="mb-5 font-[var(--font-display)] text-sm font-semibold uppercase tracking-widest text-white/40">

@@ -70,7 +70,7 @@ const howToJsonLd = {
 
 export default function FensterAusmessenPage() {
   return (
-    <main className="min-h-screen bg-[var(--konfig-canvas)] pt-24">
+    <main id="main" className="min-h-screen bg-[var(--konfig-canvas)] pt-24">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(howToJsonLd) }}
